@@ -1,5 +1,4 @@
-.PHONY all clean
-
+.PHONY: all clean
 all: dissertacao.pdf
 
 %.tex: %.raw
@@ -8,12 +7,12 @@ all: dissertacao.pdf
 %.tex: %.dat
 	./dat2tex $< > $@
 
-dissertacao.pdf: dissertacao.tex
-	pdflatex dissertacao.tex
-	bibtex dissertacao
-	makeglossaries dissertacao
-	pdflatex dissertacao.tex
-	pdflatex dissertacao.tex
+dissertacao.pdf: dissertation.tex
+	pdflatex dissertation.tex 2>/dev/null; true
+	bibtex dissertation.aux 2>/dev/null; true
+	makeglossaries dissertation 2>/dev/null; true
+	pdflatex dissertation.tex 2>/dev/null; true
+	pdflatex dissertation.tex 2>/dev/null; true
 
 clean:
 	latexmk -CA
