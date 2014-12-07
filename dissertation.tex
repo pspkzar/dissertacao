@@ -1,0 +1,142 @@
+
+% book example for classicthesis.sty
+\documentclass[
+  % Replace twoside with oneside if you are printing your thesis on a single side
+  % of the paper, or for viewing on screen.
+  oneside,
+  %twoside,
+  11pt, a4paper,
+  footinclude=true,
+  headinclude=true,
+  cleardoublepage=empty
+]{scrbook}
+
+\usepackage{lipsum}
+\usepackage[linedheaders,parts,pdfspacing]{classicthesis}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{acronym}
+\usepackage{dissertation}
+%\usepackage[acronym]{glossaries}
+
+% Title
+\title{Advanced Light Transport Algorithms on Heterogeneous Platforms: evaluation of the DICE framework}
+
+% Author
+\author{César Morais Perdigão}
+
+% Supervisor
+\def\supervisor{%
+	Luís Paulo Peixoto dos Santos
+\\
+	Alberto José G. de C. Proença
+}
+
+% Date
+\date{\today}
+
+%%Defines
+%\def \... {..}
+
+\makeglossaries  %  either use this ...
+
+%\makeindex	% ... or this
+
+\newcommand*{\myglossaryindent}{0.65cm}         
+\newcommand*{\myglsdescwidth}{10cm}                     
+\newglossarystyle{altlong4colwithindent}
+{
+  \glossarystyle{altlong4col}
+  \renewenvironment{theglossary}
+    {\begin{longtable}[l]{@{\hspace{\myglossaryindent}}lp{\myglsdescwidth}lp{\glspagelistwidth}@{}}}
+    {\end{longtable}}
+}
+
+\begin{document}
+	
+% Add acronym definitions
+\input{def/acronyms.tex}
+    
+% Cover page ---------------------------------------------
+\sf
+	\pagenumbering{alph}
+	\thispagestyle{empty}
+	\input{def/title}
+\rm
+	\cleardoublepage
+%---------------------------------------------------------
+% Add acknowledgements
+
+\chapter*{Acknowledgements}
+Write acknowledgements here
+
+	\cleardoublepage
+	
+% Add abstracts (en,pt) -----------------------------------------------------------
+\chapter*{Abstract}
+Physically based rendering is an unsolved challenge, as there are many efficient light transport algorithms, although none is robust enough to handle every possible situation, lighting and scene configuration. The performance of such techniques can be enhanced using two different approaches: more efficient and robust algorithms and the use of more computational power. Although most modern computers have both powerful CPU’s and GPU’s, most current implementations of light transport algorithms only take advantage of one of these processors. Implementing new light transport algorithms such as Vertex Connection and Merging on these hybrid platforms, using both CPU and GPU, may provide more efficient results although the suitability for such algorithms for heterogeneous computing platforms has not been tested yet, and that is the main goal of this project.
+
+	\cleardoublepage
+
+\chapter*{Resumo}
+O \textit{rendering} fotorrealista é um desafio ainda por resolver, dado que existem muitos algoritmos de transporte de luz eficientes, porem nenhum lida com todas as situações de forma robusta. O desempenho destas técnicas pode ser melhorado usando algoritmos de transporte de luz mais eficientes e robustos bem como usando mais poder computacional. Apesar da maioria dos computadores modernos ter disponível poderosos CPU's e GPU's, a maioria das implementações utiliza apenas um destes processadores. Implementar novos algoritmos de transporte de luz tal como o Vertex Connection and Merging nestas plataformas hibridas pode trazer ganhos de desempenho, porem nenhum teste para avaliar a adequabilidade destes algoritmos para sistemas heterogéneos foi efetuado, e é esse o principal objectivo deste projeto.
+
+	\cleardoublepage
+	
+	\pagenumbering{roman}
+	\setcounter{page}{3}
+	%pagestyle{fancy}   % -------- removed
+	\rm
+	
+	% Document
+	\cleardoublepage
+    \phantomsection
+    \addcontentsline{toc}{chapter}{Contents}
+	\tableofcontents
+	
+	\cleardoublepage
+	\listoffigures
+	
+	\cleardoublepage
+	\listoftables
+	
+	\cleardoublepage
+	\lstlistoflistings
+	
+	% Add list of acronyms
+	\printglossary[type=\acronymtype, title=List of Acronyms, nonumberlist=true, toctitle=List of Acronyms, style=altlong4colwithindent]
+	\cleardoublepage
+	\pagenumbering{arabic}
+	\setcounter{page}{3}
+
+\part{Introductory material}
+
+\input{chapters/intro.tex}
+\input{chapters/state_of_the_art.tex}
+
+
+\part{Core of the dissertation}
+
+
+		
+\bookmarksetup{startatroot} % Ends last part.
+\addtocontents{toc}{\bigskip} % Making the table of contents look good.
+\cleardoublepage
+
+%----------------- Bibliography (needs bibtex) --------------------------------%
+\bibliography{dissertation}
+%----------------- Index of terms (needs  makeindex) --------------------------%
+\printindex
+%------------------------------------------------------------------------------%
+	
+	\appendix
+	\renewcommand\chaptername{Appendix}
+
+	% Add appendix chapters
+
+\part{Apendices}
+
+
+	
+\end{document}
+
