@@ -5,7 +5,7 @@
 One of the first solution to the global ilumination was introduced by \cite{Kajiya} when he defined the problem of rendering as the resolution of an integral equation, also know as the rendering equation.
 
 \begin{equation}
-I(x,x')=g(x,x')[e(x,x')+\int_{S}^{} \rho(x,x',x'')I(x',x'')dx'']
+I(x,x')=g(x,x')\left[e(x,x')+\int_{S}^{} \rho(x,x',x'')I(x',x'')dx''\right]
 \label{eq:render_eq}
 \end{equation}
 
@@ -16,9 +16,10 @@ $I(x,x')$ & is related to the intensity of light passing from point $x$ to $x'$ 
 $g(x,x')$ & is the geometric term \\
 $e(x,x')$ & is related to the intensity of emited light from $x$ to $x'$ \\
 $\rho(x,x',x'')$ & is related to the intensity of light scattered from $x''$ to $x$ through $x'$\\
-
 \end{tabular}
+\\
 
+This equation translates how much light arrives at a given point from a given direction. This integral equation can not be calculated analitically, so it's expected value is calculated through Monte Carlo Integration. Starting from the camera rays are traced into the scene. Then for each hit point one new ray is generated accordingly to the properties of the material. These paths can be connected directly to the light sources in order to reduce variance. In order for there method to be unbiased, all path must be terminated by russian roullete, that is, at each hit poit there is a probability for the path to terminate. If it does not, the contribution of that sub-path is divided for the termination probability.
 
 
 \section{Bidirectional Path Tracing}
