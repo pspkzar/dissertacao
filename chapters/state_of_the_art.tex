@@ -2,4 +2,47 @@
 
 \section{Path Tracing}
 
-The fist
+One of the first solution to the global ilumination was introduced by \cite{Kajiya} when he defined the problem of rendering as the resolution of an integral equation, also know as the rendering equation.
+
+\begin{equation}
+I(x,x')=g(x,x')[e(x,x')+\int_{S}^{} \rho(x,x',x'')I(x',x'')dx'']
+\label{eq:render_eq}
+\end{equation}
+
+Where:
+
+\begin{tabular}{r l}
+$I(x,x')$ & is related to the intensity of light passing from point $x$ to $x'$ \\
+$g(x,x')$ & is the geometric term \\
+$e(x,x')$ & is related to the intensity of emited light from $x$ to $x'$ \\
+$\rho(x,x',x'')$ & is related to the intensity of light scattered from $x''$ to $x$ through $x'$\\
+
+\end{tabular}
+
+
+
+\section{Bidirectional Path Tracing}
+
+
+
+
+
+
+\section{Metropolis Light Trasport}
+
+
+
+
+
+\section{Photon Mapping}
+\subsection{Progressive Photon Mapping}
+
+
+
+
+\section{Vertex Connection and Merging}
+
+
+
+
+\section{DICE}
