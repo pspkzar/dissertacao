@@ -141,3 +141,53 @@ INPROCEEDINGS{Lafortune93bi-directionalpath,
     pages = {145--153},
     publisher = {}
 }
+
+@techreport{Kelemen,
+  title =      "Simple and Robust Mutation Strategy for Metropolis Light
+               Transport Algorithm",
+  author =     "Csaba Kelemen and L{\'a}szl{\'o} Szirmay-Kalos",
+  year =       "2001",
+  abstract =   "The paper presents a new mutation strategy for the
+               Metropolis light transport algorithm, which works in the
+               space of uniform random numbers used to build up paths. Thus
+               instead of mutating directly in the path space, mutations
+               are realized in the infinite dimensional unit cube of
+               pseudo-random numbers and these points are transformed to
+               the path space according to BRDF sampling, light source
+               sampling and Russian roulette. This transformation makes the
+               integrand and the importance function flatter and thus
+               increases the acceptance probability of the new samples in
+               the Metropolis algorithm. Higher acceptance ratio, in turn,
+               reduces the correlation of the samples, which increases the
+               speed of convergence. When mutations are calculated, a new
+               random point is selected usually in the neighborhood of the
+               previous one, but according to our proposition called
+               ``large steps'', sometimes an independent point is obtained.
+               Large steps greatly reduce the start-up bias and guarantee
+               the ergodicity of the process. Due to the fact that some
+               samples are generated independently of the previous sample,
+               this method can also be considered as a combination of the
+               Metropolis algorithm with a classical random walk.
+               Metropolis light transport is good in rendering bright image
+               areas but poor in rendering dark sections since it allocates
+               samples proportionally to the pixel luminance. Conventional
+               random walks, on the other hand, have the same performace
+               everywhere, thus they are poorer than Metropolis method in
+               bright areas, but are better at dark sections. In order to
+               keep the merits of both approaches, we use multiple
+               importance sampling to combine their results, that is, the
+               combined method will be as good at bright regions as
+               Metropolis and at dark regions as random walks. The
+               resulting scheme is robust, efficient, but most importantly,
+                                 is easy to implement and to combine with
+               an available random-walk algorithm.",
+  address =    "Favoritenstrasse 9-11/186, A-1040 Vienna, Austria",
+  institution = "Institute of Computer Graphics and Algorithms, Vienna
+               University of Technology",
+  note =       "human contact: technical-report@cg.tuwien.ac.at",
+  month =      jul,
+  number =     "TR-186-2-01-18",
+  keywords =   "rendering equation, Monte-Carlo integration, importance
+               sampling, Metropolis sampling",
+  URL =        "http://www.cg.tuwien.ac.at/research/publications/2001/Szirmay-2001-METR/",
+}
