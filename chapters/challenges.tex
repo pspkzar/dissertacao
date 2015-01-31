@@ -4,6 +4,28 @@ In this project, the main goals are to evaluate the relative performance and rob
 
 As mentioned before, communication between different devices hinders performance, and although most algorithms require no synchronization, photon mapping requires sharing the photon map across all devices, or else there would be different variance through the image, which is a perceptible flaw. As \gls{vcm} generates a new photon map in each iteration, this photon map must be copied to all used devices in every iteration, which may negatively affect performance. Another challenge is the usage of different data structures by the different ray tracing frameworks which adds complexity to the development process.
 
+The unified memory address space abstraction supported by the DICE framework will be assessed in terms of how it handles such data requirements: shared data structures and diverse data layouts. The usability of the DICE memory model with regard to supporting the specific requirements to these lighting algorithms will be qualitatively assessed through the additional effort required from the programmer.
+
 \section{Work Plan}
 
-This project will be devoloped in several stages. The first one was the literature review that concluded in the end of December 2014. The month of January was dedicated to the writing of this document and the implementation of the base structures needed for the algorithms studied. The next months of February and March will be dedicated to implement all the studied algorithms independently on the CPU and the GPU. In April, all the implementations will be integrated with DICE. The month of May will be dedicated to tests and measurements of performance and image quality of the previously developed implementations. Finaly in June all the work will be condensed in the writing of the PhD thesis.
+%This project will be devoloped in several stages. The first one was the literature review that concluded in the end of December 2014. The month of January was dedicated to the writing of this document and the implementation of the base structures needed for the algorithms studied. The next months of February and March will be dedicated to implement all the studied algorithms independently on the CPU and the GPU. In April, all the implementations will be integrated with DICE. The month of May will be dedicated to tests and measurements of performance and image quality of the previously developed implementations. Finaly in June all the work will be condensed in the writing of the PhD thesis.
+
+In table ~\ref{tab:work_plan} is the current work plan for the development of the PhD thesis.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Month} & \textbf{Work Phase} \\ \hline
+October & \multirow{3}{*}{Literature Review} \\ \cline{1-1}
+November &  \\ \cline{1-1}
+December &  \\ \hline
+January & Pre-dissertation Report Writing \\ \hline
+February & \multirow{2}{*}{Homogeneous Implementations of Light Transport Algorithms on both CPU and GPU} \\ \cline{1-1}
+March &  \\ \hline
+April & Integration with DICE \\ \hline
+May & Result Measurement and Evaluation \\ \hline
+June & PhD Thesis Writing \\ \hline
+\end{tabular}
+\caption{\label{tab:work_plan} Work Plan}
+\end{table}

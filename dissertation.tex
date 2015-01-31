@@ -18,6 +18,8 @@
 \usepackage{mathtools}
 \usepackage{acronym}
 \usepackage{dissertation}
+\usepackage{multirow}
+\usepackage{pdfpages}
 %\usepackage[acronym]{glossaries}
 
 % Title
@@ -49,8 +51,8 @@
 {
   \glossarystyle{altlong4col}
   \renewenvironment{theglossary}
-    {\begin{longtable}[l]{@{\hspace{\myglossaryindent}}lp{\myglsdescwidth}lp{\glspagelistwidth}@{}}}
-    {\end{longtable}}
+    {\begin{tabular}[l]{@{\hspace{\myglossaryindent}}lp{\myglsdescwidth}lp{\glspagelistwidth}@{}}}
+    {\end{tabular}}
 }
 
 \begin{document}
@@ -68,8 +70,10 @@
 %---------------------------------------------------------
 % Add acknowledgements
 
-\chapter*{Acknowledgements}
-Write acknowledgements here
+\includepdf{parecer_RPD_Cesar.pdf}
+
+%\chapter*{Acknowledgements}
+%Write acknowledgements here
 
 	\cleardoublepage
 	
@@ -98,8 +102,8 @@ A sintese de imagens fotorrealistas é um desafio ainda por resolver, dado que e
 	%\cleardoublepage
 	%\listoffigures
 	
-	%\cleardoublepage
-	%\listoftables
+	\cleardoublepage
+	\listoftables
 	
 	%\cleardoublepage
 	%\lstlistoflistings
