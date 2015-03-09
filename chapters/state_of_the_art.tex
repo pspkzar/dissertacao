@@ -106,3 +106,14 @@ Developing applications for heterogeneous platforms is a difficult task as expla
 
 DICE uses a task model in which tasks are scheduled by the system throughout the various available processors. The workload is distributed by generating sub-tasks of finer granularity and assigning them to different processors. The main features of DICE are an adaptative scheduler that analyses the execution time of each submited task and uses that information to perform load balancing operations, and a memory manager that simplifies different addressing spaces by presenting the developer only one address space and transparently preforming copies between different addressing spaces whenever required \citep{Barbosa}.
 
+\subsection{Ray Tracing Frameworks}
+
+Instead of developing a ray tracer from scratch, it was opted to use specialized ray tracing frameworks optimized for different architectures, namely Embree for \gls{cpu}'s and OptiX for \gls{gpu}'s. These frameworks are optimized to take advantage of most of the hardware features available, and allow a faster development and simpler code, while ensuring a good performance.
+
+\subsubsection{Embree}
+
+Embree is a set of low level ray tracing kernels developed by Intel that are fully optimized for \gls{cpu}'s and the Intel \gls{mic} architecture. This framework is completely vectorized in two different ways. When the rays are coherent, it is possible to use ray packets and intersect all rays with a single hierarchy node. When the rays are not coherent, the single ray intersection primitive intersects that ray with multiple hierarchy nodes. The Embree kernels can switch between these two modes of intersection accordingly to the level of \gls{simd} usage.
+
+\subsubsection{OptiX}
+
+OptiX is a ray tracing framework developed by Nvidia. Instead of embree which provides a low level set of ray tracing kernels, OptiX incudes a complete and programable ray tracing pipeline. Although ray tracing algorithms are very divergent by nature, OptiX still attains high performance by using the concept of persistent threads and and by scheduling work with a state machine. First while a normal CUDA kernel launches as many threads as requested, OptiX allways launches just enough threads to fill the GPU. Each of these threads then pulls work out of a work pull. While executing, these threads may diverge when rays intersect different materials and miss the geometry. However, most of these threads always return to the main state that is tracing rays. So, instead of just allowing any thread to execute when there is divergence, some states are delayed to maximize GPU utilization.
