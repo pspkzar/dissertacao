@@ -21,7 +21,9 @@ $\rho(x,x',x'')$ & is related to the intensity of light scattered from $x''$ to 
 \end{tabular}
 \\
 
-This equation translates to how much light arrives at a given point from a given direction. This integral equation can not be calculated analitically, so its expected value is calculated through Monte Carlo Integration. Based on this, the goal is to trace a light transport path, with points $x_0$ .. $x_n$ in which $x_0$ is a point on a light source and $x_n$ is a point on the camera lens. As it is very dificult for a randomly generated path to hit the sensor, these paths are usualy generated backwards, starting from the camera and ending on the light sources. Forward path tracing is only efficient in the rendering of caustics, while backward path tracing cannot so efficiently handle caustics but the global variance of the resulting image is lower. This recursive process is terminated by russian roullete.
+This equation translates to how much light arrives at a given point from a given direction. This integral equation can not be calculated analitically, so its expected value is calculated through Monte Carlo Integration. Based on this, the goal is to trace a light transport path, with points $x_0$ .. $x_n$ in which $x_0$ is a point on a light source and $x_n$ is a point on the camera lens. 
+%As it is very dificult for a randomly generated path to hit the sensor, these paths are usualy generated backwards, starting from the camera and ending on the light sources. Forward path tracing is only efficient in the rendering of caustics, while backward path tracing cannot so efficiently handle caustics but the global variance of the resulting image is lower. This recursive process is terminated by russian roullete.
+Commonly, these paths are traced from the camera to the light source, to ensure that paths sampled fall in the image plane and to capture reflection and refration paths. However caustic paths have a very low sampling probability, reaching zero if using point light sources. Tracing paths form the light source to the camera however sample caustics more effectively but specular paths can not be sampled.
 
 \section{Bidirectional Path Tracing}
 
@@ -46,26 +48,30 @@ Being $n$ the number of sampling techniques and $n_i$ the number of samples for 
 \end{equation}
 In order to use \gls{mis} in Bidirectional Path Tracing one must consider that each path of a given length can be sampled in several ways: a path of lengh $n$ can be sampled by using whatever light and camera sub-paths of $s$ and $t$ vertices as long as $n=s+t+1$. Given this it is just needed to apply the heuristic above to calculate the respective weight for that path.
 
+\begin{equation}
+I=\sum_{s \geq 0}\sum_{t \geq 0}\omega_{s,t}(x_{s,t})\frac{f_j (x_{s,t})}{p_{s,t}(x_{s,t})}
+\end{equation}
+
 This algorithm is much more robust than path tracing, as it can sample many light transport paths efficiently and robustly. Nonetheless, this algorithm is not perfect for every situation, as it has dificulty sampling reflected caustics \citep{Georgiev}.
 
-\section{Metropolis Light Trasport}
+%\section{Metropolis Light Trasport}
 
-In an effort to improve the efficiency of light transport algorithms, \cite{Veach} proposed the adaptation of the Metropolis Sampling algorithm to the light trasport problem. This algorithms starts from one point in the function domain and generates a random walk such that in the limit, the sampling distribution is proportional to the function value, called the stationary distribution function. These new samples however, may not allways be accepted, and have an acceptance probability given by equation ~\ref{eq:acc_prob}.
-\begin{equation}
-a(x\xrightarrow{}y) = min \left\{ 1 , \frac{f(y)T(y\xrightarrow{}x)}{f(x)T(x\xrightarrow{}y)} \right\}
-\label{eq:acc_prob}
-\end{equation}
-where $a(x\xrightarrow{}y)$ is the acceptance probability from state $x$ to $y$ and $T$ is the the transition probability for the mutation being applied. As in the limit, the samples are distributed proportionaly to the function value, all samples have the same contribution to the final result.
+%In an effort to improve the efficiency of light transport algorithms, \cite{Veach} proposed the adaptation of the Metropolis Sampling algorithm to the light trasport problem. This algorithms starts from one point in the function domain and generates a random walk such that in the limit, the sampling distribution is proportional to the function value, called the stationary distribution function. These new samples however, may not allways be accepted, and have an acceptance probability given by equation ~\ref{eq:acc_prob}.
+%\begin{equation}
+%a(x\xrightarrow{}y) = min \left\{ 1 , \frac{f(y)T(y\xrightarrow{}x)}{f(x)T(x\xrightarrow{}y)} \right\}
+%\label{eq:acc_prob}
+%\end{equation}
+%where $a(x\xrightarrow{}y)$ is the acceptance probability from state $x$ to $y$ and $T$ is the the transition probability for the mutation being applied. As in the limit, the samples are distributed proportionaly to the function value, all samples have the same contribution to the final result.
 
-Applying this algorithm to the light transport problem, the function domain is the space of light transport paths and the function value is the contribution these paths have in the final image. The \gls{mlt} algorithm starts by generating a light transport path, using \gls{bdpt} for instance, and then aply mutations to that path using the acceptance probability defined in ~\ref{eq:acc_prob}.
+%Applying this algorithm to the light transport problem, the function domain is the space of light transport paths and the function value is the contribution these paths have in the final image. The \gls{mlt} algorithm starts by generating a light transport path, using \gls{bdpt} for instance, and then aply mutations to that path using the acceptance probability defined in ~\ref{eq:acc_prob}.
 
-As the initial sample in the algorithm was not sampled according to the stationary distribution function, the algorithm exhibits startup bias, because only in the limit the samples converge to stationary distribution function and until then the results may be heavly influenced by the choice of the initial path. This problem is solved by sampling a set of paths, assigning each a weight $W_0 = f(X_0)/p_0 (X_0)$, and then select a subset of these paths with a probability proportional to these weights. Then, all these paths are assigned the same weight that is the average of all previously sampled weights. This solves two problems: removes start-up bias and calculates the normalization weight of the samples, scaling them to the right value.
+%As the initial sample in the algorithm was not sampled according to the stationary distribution function, the algorithm exhibits startup bias, because only in the limit the samples converge to stationary distribution function and until then the results may be heavly influenced by the choice of the initial path. This problem is solved by sampling a set of paths, assigning each a weight $W_0 = f(X_0)/p_0 (X_0)$, and then select a subset of these paths with a probability proportional to these weights. Then, all these paths are assigned the same weight that is the average of all previously sampled weights. This solves two problems: removes start-up bias and calculates the normalization weight of the samples, scaling them to the right value.
 
-An important part of this algorithm are the mutations. In his work, \cite{Veach} proposed a set of mutations that aimed to solve some well known problem of light transpor algorithms, namely reflected caustics. However, \cite{Kelemen} proposed a simpler and robust form of mutation in the primary sampling space. Instead of trying to directly mutate the paths, mutations would be applied to the pseudo-random numbers used to generate them, being this perturbation smaller the higher the contribution of the sample in order to keep the acceptance probability high. One important property of the mutaions used in the Metropolis algorithm is that these must be able to transit from any point in the function domain to any other possible point, or else the algorithm would not respect the principle of ergodicity. In order to do that, sometimes it is needed to perform a large step mutation, that is regenerate all the random numbers used.
+%An important part of this algorithm are the mutations. In his work, \cite{Veach} proposed a set of mutations that aimed to solve some well known problem of light transpor algorithms, namely reflected caustics. However, \cite{Kelemen} proposed a simpler and robust form of mutation in the primary sampling space. Instead of trying to directly mutate the paths, mutations would be applied to the pseudo-random numbers used to generate them, being this perturbation smaller the higher the contribution of the sample in order to keep the acceptance probability high. One important property of the mutaions used in the Metropolis algorithm is that these must be able to transit from any point in the function domain to any other possible point, or else the algorithm would not respect the principle of ergodicity. In order to do that, sometimes it is needed to perform a large step mutation, that is regenerate all the random numbers used.
 
 \section{Photon Mapping}
 
-All previous algorithms attempted to solve the problem of global illumination by sampling light transport path from the light source to the camera. \gls{pm} however, attempts to calculate the radiance at any given point by estimating a photon density \citep{Jensen}.
+The previous algorithms attempted to solve the problem of global illumination by sampling light transport paths from the light source to the camera. \gls{pm} however, attempts to calculate the radiance at any given point by estimating a photon density \citep{Jensen}.
 
 In a first phase the algorithm traces packets of photons from the light sources into the scene. In a second phase, rays are traced from the camera and the hit points are saved. Then, the photon map is consulted to calculate the photon density in the neighborhood of the hitpoints. One technique used to reduce the variance of this algorithm is the use of distinct photon maps for caustics and diffuse indirect ilumination and consult these maps differently: the caustics map is accessed directly while for diffuse ilumination a final gathering step is performed. In final gathering, rays are traced from the hit points into the scene and in the intersections of these rays the diffuse map is consulted.
 
@@ -80,6 +86,10 @@ Photon Mapping is a biased algorithm, although if the number of photons used ten
 Instead of storing the positions of photons in the photon map, the hitpoints from the camera rays are stored in an acceleration structure. Then, when photons are traced from the light sources, a range search looks for any hitpoint in the neighborhood and the contribution of that photon is added to the corresponding pixels. In each iteration of the algorithm the search radius is decreased according to a constant parameter of the algorithm \citep{Hachisuka}.
 
 This alteration to the algorithm improves the efficiency of Photon Mapping, namely in terms of memory usage, now fixed proportionaly to the size of the image, instead of proportional to the number of photons used. Although with Progressive Photon Mapping the bias may be zero in the limit, this algorithm also produces more useless work the longer it runs, since as the search radius decreases with the execution, more photons are traced that do not contribute to the final image.
+
+\subsection{Bidirectional Photon Mapping}
+
+
 
 \section{Vertex Connection and Merging}
 
