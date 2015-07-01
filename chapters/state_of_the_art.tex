@@ -50,6 +50,7 @@ In order to use \gls{mis} in Bidirectional Path Tracing one must consider that e
 
 \begin{equation}
 I=\sum_{s \geq 0}\sum_{t \geq 0}\omega_{s,t}(x_{s,t})\frac{f_j (x_{s,t})}{p_{s,t}(x_{s,t})}
+\label{eq:bpt}
 \end{equation}
 
 This algorithm is much more robust than path tracing, as it can sample many light transport paths efficiently and robustly. Nonetheless, this algorithm is not perfect for every situation, as it has dificulty sampling reflected caustics \citep{Georgiev}.
@@ -73,9 +74,9 @@ This algorithm is much more robust than path tracing, as it can sample many ligh
 
 The previous algorithms attempted to solve the problem of global illumination by sampling light transport paths from the light source to the camera. \gls{pm} however, attempts to calculate the radiance at any given point by estimating a photon density \citep{Jensen}.
 
-In a first phase the algorithm traces packets of photons from the light sources into the scene. In a second phase, rays are traced from the camera and the hit points are saved. Then, the photon map is consulted to calculate the photon density in the neighborhood of the hitpoints. One technique used to reduce the variance of this algorithm is the use of distinct photon maps for caustics and diffuse indirect ilumination and consult these maps differently: the caustics map is accessed directly while for diffuse ilumination a final gathering step is performed. In final gathering, rays are traced from the hit points into the scene and in the intersections of these rays the diffuse map is consulted.
+In a first phase the algorithm traces packets of photons from the light sources into the scene and stored in a range search acceleration structure, the photon map. In a second phase, rays are traced from the camera and the photon map is consulted to calculate the photon density in the neighborhood of the hitpoints. One technique used to reduce the variance of this algorithm is the use of distinct photon maps for caustics and diffuse indirect ilumination and consult these maps differently: the caustics map is accessed directly while for diffuse ilumination a final gathering step is performed. In final gathering, rays are traced from the hit points into the scene and in the intersections of these rays the diffuse map is consulted.
 
-This algorithm, unlike all the previously mentioned algorithms, introduces bias, because there is an aproximation of the photon map search area to an infinitly small area. This causes the algorithm to not converge to the right result but to an aproximation with a given error(bias).
+This algorithm, unlike all the previously mentioned algorithms, introduces bias, because there is an aproximation of the photon map search area to an infinitly small area. This causes the algorithm to not converge to the correct result but to an aproximation with an unknown error(bias).
 
 Although biased, this algorithm performs well in the handling of caustics, even reflected and refracted caustics. However, the convergence rate for the overall diffuse ilumination is smaller than that of Bidirectional Path Tracing \citep{Georgiev}. Another backdraw of this algorithm is memory usage, since the more photons used to rendering, the larger the photon map has to be.
 
