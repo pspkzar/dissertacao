@@ -20,6 +20,8 @@
 \usepackage{dissertation}
 \usepackage{multirow}
 \usepackage{pdfpages}
+\usepackage{float}
+\usepackage{svg}
 %\usepackage[acronym]{glossaries}
 
 % Title
@@ -70,14 +72,14 @@
 %---------------------------------------------------------
 % Add acknowledgements
 
-%\chapter*{Acknowledgements}
+\chapter*{Acknowledgements}
 %Write acknowledgements here
 
 	\cleardoublepage
 	
 % Add abstracts (en,pt) -----------------------------------------------------------
 \chapter*{Abstract}
-Physically based rendering is an unsolved challenge, as there are many efficient light transport algorithms, although none is robust enough to handle every possible situation, lighting and scene configuration. The performance of such techniques can be enhanced using two different approaches: more efficient and robust algorithms and the use of more computational power. Although most modern computers have both powerful CPUs and GPUs, most current implementations of light transport algorithms only take advantage of one of these processors. Implementing new light transport algorithms such as Vertex Connection and Merging on these hybrid platforms, using both CPU and GPU, may provide more efficient results although the suitability for such algorithms for heterogeneous computing platforms has not been tested yet, and that is the main goal of this project.
+Physically based rendering is an unsolved challenge, as there are many efficient light transport algorithms, although none is robust enough to handle every possible situation, lighting and scene configuration. The performance of such techniques can be enhanced using two different approaches: more efficient and robust algorithms and the use of more computational power. Although most modern computers have both powerful CPUs and GPUs, most current implementations of light transport algorithms only take advantage of one of these processors. Implementing new light transport algorithms such as Vertex Connection and Merging on these hybrid platforms, using both CPU and GPU, may provide more efficient results, although the suitability of such algorithms for heterogeneous computing platforms has not been tested yet, and that is the main goal of this project.
 
 	\cleardoublepage
 
@@ -122,6 +124,7 @@ A sintese de imagens fotorrealistas é um desafio ainda por resolver, dado que e
 \part{Core of the dissertation}
 
 \input{chapters/experiment.tex}
+\input{chapters/conclusion.tex}
 
 
 		

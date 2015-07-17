@@ -1,8 +1,8 @@
 \chapter{Experimental Results}
 
-In order to test the scalability and efficiency of the studied algorithms, the execution time was measured using only the \gls{gpu}, and while using only the \gls{cpu} and using both devices with a varying number of \gls{cpu} cores. The workload distribution between the devices was also measured by the DICE scheduler. Every time measurement was executed five times, selecting the best time as the final result. These tests were executed using the Living Room Scene with a resolution of 1024x768.
+In order to test the scalability and efficiency of the studied algorithms, the execution times of the studied algorithms were measured using only the \gls{gpu}, and while using only the \gls{cpu} or both, with a varying number of \gls{cpu} cores and threads per core, in order to evaluate the gain of using \gls{ht}. The workload distribution between the devices was also measured by the DICE scheduler. Every time measurement was executed five times, selecting the best time as the final result. These tests were executed using the Living Room Scene with a resolution of 1024x768 and 50 samples per pixel.
 
-In order to evaluate the image quality produced by the studied algorithms, three scenes were used for testing, each with a different goal. The Sponza scene, courtesy of Crytek, is an outdoor scene with only diffuse materials, but complex geometry nonetheless. The Kitchen scene, courtesy of \todo[inline]{who to give credit to}, is an indoor scene with a lot of glossy materials. The final and most complex scene, the Living Room, courtesy of Iliyan Georgiev, is an indoor scene as well but with an emphasis on reflected caustics and complex lighting. For every scene a reference image was rendered with \gls{vcm} with 100000 samples per pixel. Then for every algorithm a set of images with an approximate rendering time were produced. All these images were compared to the reference image using the \gls{rmse} metric.
+In order to evaluate the image quality produced by the studied algorithms, three scenes were used for testing, each with a different goal. The Sponza scene, courtesy of Crytek, is an outdoor scene with only diffuse materials, but complex geometry nonetheless. The Kitchen scene, courtesy of \todo[inline]{who to give credit to}, is an indoor scene with glossy materials. The final and most complex scene, the Living Room, courtesy of Iliyan Georgiev, is an indoor scene as well but with an emphasis on reflected caustics and complex lighting. For every scene a reference image was rendered with \gls{vcm} with 100000 samples per pixel. Then for every algorithm a set of images with an approximate rendering time were produced. All these images were compared to the reference image using the \gls{rmse} metric.
 
 \begin{figure}[ht]
 \centering
@@ -54,24 +54,95 @@ Embree & 2.5.1 \\
 
 \section{Excution Time Results}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \includegraphics[width=\linewidth]{img/ptTexec.jpg}
 \caption{\label{img:ptTexec} Path Tracer Execution Times}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \includegraphics[width=\linewidth]{img/bptTexec.jpg}
 \caption{\label{img:bptTexec} Bidirectional Path Tracer Execution Times}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \includegraphics[width=\linewidth]{img/bpmTexec.jpg}
 \caption{\label{img:bpmTexec} Bidirectional Photon Mapping Execution Times}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \includegraphics[width=\linewidth]{img/vcmTexec.jpg}
 \caption{\label{img:vcmTexec} VCM Execution Times}
 \end{figure}
 
-\section{Speedup Results}
+All the execution times measured indicate that all the algorithms studied are scalable and take advantage of both devices in the rendering process.
+
+\section{CPU Speedup Results}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/ptSpeedup.jpg}
+\caption{\label{img:ptSpeedup} Path Tracer Speedup}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/bptSpeedup.jpg}
+\caption{\label{img:bptSpeedup} Bidirectional Path Tracer Speedup}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/bpmSpeedup.jpg}
+\caption{\label{img:bpmSpeedup} Bidirectional Photon Mapping Speedup}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/vcmSpeedup.jpg}
+\caption{\label{img:vcmSpeedup} VCM Speedup}
+\end{figure}
+
+Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. All algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% and 50\%.
+
+\section{CPU Parallelization Eficiency Results}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/ptEff.jpg}
+\caption{\label{img:ptEff} Path Tracer Efficiency}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/bptEff.jpg}
+\caption{\label{img:bptEff} Bidirectional Path Tracer Efficiency}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/bpmEff.jpg}
+\caption{\label{img:bpmEff} Bidirectional Photon Mapping Efficiency}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/vcmEff.jpg}
+\caption{\label{img:vcmEff} VCM Efficiency}
+\end{figure}
+
+Every algorithms except Bidirectional Photon Mapping has a parallelization efficiency above 0.9, while this falls to an efficiency of 0.77 using 20 cores. This inefficiency may be due to the high memory access this algorithm has compared to all the other algorithms.
+
+\section{Image Quality Results}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/sponzaImgq.jpg}
+\caption{\label{img:sponzaImgq} Sponza Image Quality}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/kitchenImgq.jpg}
+\caption{\label{img:kitchenImgq} Kitchen Image Quality}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/livingroomImgq.jpg}
+\caption{\label{img:livingroomImgq} Livingroom Image Quality}
+\end{figure}
+
+In the Sponza scene, all algorithms seem to converge to the right solution, however Path Tracing is the best algorithms in this case. This may be due to the outdoor scene configuration where may of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracin, not needing more robust solutions.
+
+In the Kithcen scene, both Bidirectional Path Tracer and Vertex Connecion and Merging algorithms converge to the expected result, although the former is faster for this scene. Both Path tracer and Bidirectional Photon Mapping present lower convergence rates due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces.
+
+In the Living Room scene Vertex Connection and Merging has the fastest convergence, while the remaining algorithms converges much more slowly.
