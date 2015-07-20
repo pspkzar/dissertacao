@@ -1,10 +1,18 @@
 \chapter{Experimental Results}
 
+\section{Technical Aproach}
+
+In order to evaluate the suitability of advanced light transport algorithms to heterogeneous systems, there were developed optimized implementations of all algorithms for both \gls{cpu} and \gls{gpu}. These implementations were developed using specialized ray tracing libraries, namely Nvidia Optix \citep{parker2010optix} and Intel Embree \citep{wald2014embree}.
+
+Integrating both \gls{cpu} and \gls{gpu} implementations using DICE was simple, although some adaptations were applied in order to improve efficiency. DICE considers every \gls{cpu} core as an independant device, the same way it considers a \gls{gpu} for the purpose of work sharing. However, for photon mapping based algorithms this is innapropriate because if image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory. In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use.
+
+\section{Methodology}
+
 In order to test the scalability and efficiency of the studied algorithms, the execution times of the studied algorithms were measured using only the \gls{gpu}, and while using only the \gls{cpu} or both, with a varying number of \gls{cpu} cores and threads per core, in order to evaluate the gain of using \gls{ht}. The workload distribution between the devices was also measured by the DICE scheduler. Every time measurement was executed five times, selecting the best time as the final result. These tests were executed using the Living Room Scene with a resolution of 1024x768 and 50 samples per pixel.
 
 In order to evaluate the image quality produced by the studied algorithms, three scenes were used for testing, each with a different goal. The Sponza scene, courtesy of Crytek, is an outdoor scene with only diffuse materials, but complex geometry nonetheless. The Kitchen scene, courtesy of \todo[inline]{who to give credit to}, is an indoor scene with glossy materials. The final and most complex scene, the Living Room, courtesy of Iliyan Georgiev, is an indoor scene as well but with an emphasis on reflected caustics and complex lighting. For every scene a reference image was rendered with \gls{vcm} with 100000 samples per pixel. Then for every algorithm a set of images with an approximate rendering time were produced. All these images were compared to the reference image using the \gls{rmse} metric.
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \centering
 \begin{minipage}[b]{0.3\linewidth}
 \includegraphics[width=\linewidth]{img/sponza_ref.jpg}
@@ -23,7 +31,7 @@ In order to evaluate the image quality produced by the studied algorithms, three
 
 \end{figure}
 
-\section{Setup}
+\section{Experimental Setup}
 
 All experiments were executed on a dual-socket computer with two 10 core Intel Xeon E5-2670 v2 \gls{cpu} at the frequency of 2.50GHz, 64 GB of RAM and a Nvidia Tesla K20 \gls{gpu}.
 
@@ -51,8 +59,9 @@ Embree & 2.5.1 \\
 \caption{\label{tab:soft_ver} Software Versions Used}
 \end{table}
 
+\section{Result Analisys}
 
-\section{Excution Time Results}
+\subsection{Excution Time Results}
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{img/ptTexec.jpg}
@@ -76,7 +85,7 @@ Embree & 2.5.1 \\
 
 All the execution times measured indicate that all the algorithms studied are scalable and take advantage of both devices in the rendering process.
 
-\section{CPU Speedup Results}
+\subsection{CPU Speedup Results}
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{img/ptSpeedup.jpg}
@@ -100,7 +109,7 @@ All the execution times measured indicate that all the algorithms studied are sc
 
 Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. All algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% and 50\%.
 
-\section{CPU Parallelization Eficiency Results}
+\subsection{CPU Parallelization Eficiency Results}
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{img/ptEff.jpg}
@@ -124,7 +133,7 @@ Every algorithm except Bidirectional Photon Mapping achieve an almost linear spe
 
 Every algorithms except Bidirectional Photon Mapping has a parallelization efficiency above 0.9, while this falls to an efficiency of 0.77 using 20 cores. This inefficiency may be due to the high memory access this algorithm has compared to all the other algorithms.
 
-\section{Image Quality Results}
+\subsection{Image Quality Results}
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{img/sponzaImgq.jpg}
@@ -141,7 +150,7 @@ Every algorithms except Bidirectional Photon Mapping has a parallelization effic
 \caption{\label{img:livingroomImgq} Livingroom Image Quality}
 \end{figure}
 
-In the Sponza scene, all algorithms seem to converge to the right solution, however Path Tracing is the best algorithms in this case. This may be due to the outdoor scene configuration where may of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracin, not needing more robust solutions.
+In the Sponza scene, all algorithms seem to converge to the right solution, however Path Tracing is the best algorithms in this case. This may be due to the outdoor scene configuration where may of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracin, not needing more complex solutions.
 
 In the Kithcen scene, both Bidirectional Path Tracer and Vertex Connecion and Merging algorithms converge to the expected result, although the former is faster for this scene. Both Path tracer and Bidirectional Photon Mapping present lower convergence rates due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces.
 
