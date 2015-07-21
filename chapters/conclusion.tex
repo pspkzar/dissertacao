@@ -1,15 +1,23 @@
 \chapter{Conclusions and Future Work}
 
-All algorithms suitable to heterogeneous systems containing CPUs and GPUs. BPM has worst efficiency.
+%All algorithms suitable to heterogeneous systems containing CPUs and GPUs. BPM has worst efficiency.
 
-Bidirectional algorithms penalized in outdoor scenes.
+%Bidirectional algorithms penalized in outdoor scenes.
 
-VCM and BPM overhead when reflected caustics not present.
+%VCM and BPM overhead when reflected caustics not present.
 
-Only a small set of DICE features used.
+%Only a small set of DICE features used.
 
-DICE has full C++ generic interface. Easy enough to use and learn.
+%DICE has full C++ generic interface. Easy enough to use and learn.
 
-Scheduler learing robust to handle workload distribution and maximizes efficiency.
+%Scheduler learing robust to handle workload distribution and maximizes efficiency.
 
-Future work: try to adapt code to multi-GPU and develop for Xeon Phi.
+%Future work: try to adapt code to multi-GPU and develop for Xeon Phi.
+
+From the observed results, it is possible to infer that all sthe studied algorithms are suited for heterogeneous systems containing both \gls{cpu} and \gls{gpu}, as all algorithms use the available resources efficiently.
+
+From the studied algorithms, \gls{vcm} is the more robust, allways converging to the solution expected, although with a slight overhead when not dealing with complex lighting.
+
+DICE is a complete framework for programming heterogeneous systems, although during this work, only a small set of the available features were used. As specialized implementations for each device were used, and memory transfers were inexistent, only the DICE scheduler was used. The scheduler was efficient and distributed workload in a way that maximized performance and efficiency. From an usability point of view, programming with DICE was simple \todo[inline]{c++ template interface?} and easy to interact with the existing rendering code.
+
+As for future work, one of the main goals is to make the renderer suitible for a multi-GPU environment, which due to limitations of the Optix framework is not trivial. Another interesting possibility is to test the renderer on an Intel Xeon Phi using Embree as well.

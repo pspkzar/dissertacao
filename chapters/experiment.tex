@@ -172,8 +172,8 @@ Every algorithms except Bidirectional Photon Mapping has a parallelization effic
 \caption{\label{img:livingroomImgq} Livingroom Image Quality}
 \end{figure}
 
-In the Sponza scene, all algorithms seem to converge to the right solution, however Path Tracing is the best algorithms in this case. This may be due to the outdoor scene configuration where may of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracin, not needing more complex solutions.
+In the Sponza scene, all algorithms seem to converge to the right solution, however Path Tracing is the best algorithms in this case. This may be due to the outdoor scene configuration where many of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracing, not needing more complex solutions.
 
 In the Kithcen scene, both Bidirectional Path Tracer and Vertex Connecion and Merging algorithms converge to the expected result, although the former is faster for this scene. Both Path tracer and Bidirectional Photon Mapping present lower convergence rates due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces.
 
-In the Living Room scene Vertex Connection and Merging has the fastest convergence, while the remaining algorithms converges much more slowly.
+In the Living Room scene, Vertex Connection and Merging has the fastest convergence, while the remaining algorithms converges much more slowly.
