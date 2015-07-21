@@ -107,7 +107,7 @@ All the execution times measured indicate that all the algorithms studied are sc
 \caption{\label{img:vcmSpeedup} VCM Speedup}
 \end{figure}
 
-Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. All algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% and 50\%.
+Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. All algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% to 50\%.
 
 \subsection{CPU Parallelization Eficiency Results}
 
@@ -132,6 +132,28 @@ Every algorithm except Bidirectional Photon Mapping achieve an almost linear spe
 \end{figure}
 
 Every algorithms except Bidirectional Photon Mapping has a parallelization efficiency above 0.9, while this falls to an efficiency of 0.77 using 20 cores. This inefficiency may be due to the high memory access this algorithm has compared to all the other algorithms.
+
+\subsection{Workload Distribution Results}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/ptwl.jpg}
+\caption{\label{img:ptwl} Path Tracer Workload Distribution}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/bptwl.jpg}
+\caption{\label{img:bptwl} Bidirectional Path Tracer Workload Distribution}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/bpmwl.jpg}
+\caption{\label{img:bpmwl} Bidirectional Photon Mapping Workload Distribution}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{img/vcmwl.jpg}
+\caption{\label{img:vcmwl} VCM Workload Distribution}
+\end{figure}
 
 \subsection{Image Quality Results}
 
