@@ -1,4 +1,8 @@
-\usepackage{scrpage2}
+\usepackage{lipsum}
+\usepackage[linedheaders,parts,pdfspacing]{classicthesis}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{acronym}\usepackage{scrpage2}
 \usepackage{times}
 \usepackage[utf8x]{inputenc}
 \usepackage{etex}
@@ -128,7 +132,7 @@
     {}
 
 % Arrow diagrams
-%\usepackage[all]{xy}
+%\usepackage[all]{xy}  % de-comment if you need diagrams
 
 % Use dot within TeX
 %\usepackage{dot2texi}
@@ -217,3 +221,29 @@
 \usepackage{dtklogos}
 
 \newcommand{\reminder}[1]{\fbox{{\color{blue} #1}}}
+
+\makeatletter
+
+\gdef\@supervisor{}
+\gdef\@cosupervisor{}
+\gdef\@titleA{}
+\gdef\@titleB{}
+\gdef\@titleC{}
+
+\def\supervisor#1{\gdef\@supervisor{#1}}
+\def\cosupervisor#1{\gdef\@cosupervisor{#1}}
+
+\def\titleA#1{\gdef\@titleA{#1}}
+\def\titleB#1{\gdef\@titleB{#1}}
+\def\titleC#1{\gdef\@titleC{#1}}
+
+\makeatother
+
+\def\myear{\ifcase\month\or
+ January\or February\or March\or April\or May\or June\or
+ July\or August\or September\or October\or November\or December\fi
+ \space\number\year}
+ 
+\newenvironment{backcover}{\begin{titlepage}}{\end{titlepage}}
+
+\newenvironment{frontcover}{\begin{titlepage}}{\end{titlepage}}

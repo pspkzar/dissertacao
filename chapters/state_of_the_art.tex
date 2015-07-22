@@ -22,12 +22,23 @@ $\rho(x,x',x'')$ & is related to the intensity of light scattered from $x''$ to 
 \\
 
 This equation translates to how much light arrives at a given point from a given direction. This integral equation can not be calculated analitically, so its expected value is calculated through Monte Carlo Integration. Based on this, the goal is to trace a light transport path, with points $x_0$ .. $x_n$ in which $x_0$ is a point on a light source and $x_n$ is a point on the camera lens. 
-%As it is very dificult for a randomly generated path to hit the sensor, these paths are usualy generated backwards, starting from the camera and ending on the light sources. Forward path tracing is only efficient in the rendering of caustics, while backward path tracing cannot so efficiently handle caustics but the global variance of the resulting image is lower. This recursive process is terminated by russian roullete.
 Commonly, these paths are traced from the camera to the light source, to ensure that paths sampled fall in the image plane and to capture reflection and refraction paths. However caustic paths have a very low sampling probability, reaching zero if using point light sources. Tracing paths form the light source to the camera however sample caustics more effectively but specular paths can not be sampled.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{img/ptDiagram.jpeg}
+\caption{\label{img:ptdiag} Path Tracing Algorithm}
+\end{figure}
 
 \section{Bidirectional Path Tracing}
 
 \gls{bdpt}, proposed independently by \cite{Veach} and \cite{Lafortune} combines both forward and backwards path tracing in one single method that can become more robust than the previous two alone. Although with a different mathematical background, both authors propose that the method should sample pairs of sub-paths containing a light sub-path and a camera sub-path. Then, each vertex of one sub-path is explicitly connected to all vertices of the other one, generating a new set of light transport paths.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{img/bptDiagram.jpeg}
+\caption{\label{img:bptdiag} Bidirectional Path Tracing Algorithm}
+\end{figure}
 
 In order to make the algorithm more robust, \cite{Veach} proposed the Path Space Integration Framework and \gls{mis}. The first consists in converting the problem of light transport from a recursive integral equation (~\ref{eq:render_eq}) to a simple integral over the space of all light transport paths.
 \begin{equation}
@@ -76,6 +87,12 @@ The previous algorithms attempted to solve the problem of global illumination by
 
 In a first phase the algorithm traces packets of photons from the light sources into the scene and stored in a range search acceleration structure, the photon map. In a second phase, rays are traced from the camera and the photon map is consulted to calculate the photon density in the neighborhood of the hitpoints. One technique used to reduce the variance of this algorithm is the use of distinct photon maps for caustics and diffuse indirect ilumination and consult these maps differently: the caustics map is accessed directly while for diffuse ilumination a final gathering step is performed. In final gathering, rays are traced from the hit points into the scene and in the intersections of these rays the diffuse map is consulted.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{img/pmDiagram.png}
+\caption{\label{img:pmdiag} Photon Mapping Algorithm}
+\end{figure}
+
 This algorithm, unlike all the previously mentioned algorithms, introduces bias, because there is an aproximation of the photon map search area to an infinitly small area. This causes the algorithm to not converge to the correct result but to an aproximation with an unknown error (bias).
 
 Although biased, this algorithm performs well in the handling of caustics, even reflected and refracted caustics. However, the convergence rate for the overall diffuse ilumination is smaller than that of Bidirectional Path Tracing \citep{Georgiev}. Another backdraw of this algorithm is memory usage, since the more photons used to rendering, the larger the photon map has to be.
@@ -85,6 +102,12 @@ Although biased, this algorithm performs well in the handling of caustics, even 
 Photon Mapping is a biased algorithm, although if the number of photons used tends to infinity and the search radius in the photon map tends to zero, the bias is zero in the limit. This makes the bias in the algorithm consistent and this property can be used to improve the quality of the algorithm.
 
 Instead of storing the positions of photons in the photon map, the hitpoints from the camera rays are stored in an acceleration structure. Then, when photons are traced from the light sources, a range search looks for any hitpoint in the neighborhood and the contribution of that photon is added to the corresponding pixels. In each iteration of the algorithm the search radius is decreased according to a constant parameter of the algorithm \citep{Hachisuka}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{img/ppmDiagram.png}
+\caption{\label{img:ppmdiag} Progressive Photon Mapping Algorithm}
+\end{figure}
 
 This alteration to the algorithm improves the efficiency of Photon Mapping, namely in terms of memory usage, now fixed proportionaly to the size of the image, instead of proportional to the number of photons used. Although with Progressive Photon Mapping the bias may be zero in the limit, this algorithm also produces more useless work the longer it runs, since as the search radius decreases with the execution, more photons are traced that do not contribute to the final image.
 
@@ -107,10 +130,14 @@ p_{VM}=[\pi r^2 p(x_{s-1}\xrightarrow{}x_{s}^{*})]p_{VC}(x)
 \end{equation}
 where $p_{VC}(x)$ is the probability of generating path $x$ through Bidirectional Path Tracing and the initial part is the probability density funcion for the last light sub-path vertex to intersect the merging area of the last camera sub-path vertex.
 
-With a new path sampling technique, Vertex Merging, in conjunction with Bidirection Path Tracing, or Vertex Connection, it is possible to combine these two techinques using \gls{mis} to achieve robustness. This new combined algorithm starts like Bidirectional Path Tracing by tracing a set of paths from the light sources, and stores the vertices in a range search acceleration structure. Then when the camera sub-paths are being traced, each vertex of the camera sub-path is connected to all the vertices of the respective light sub-path, and searches the acceleration structure for any vertices from any light sub-path viable for merging.
-%\begin{equation}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{img/vcmDiagram.png}
+\caption{\label{img:vcmdiag} Vertex Connection and Merging Algorithm}
+\end{figure}
 
-%\end{equation}
+With a new path sampling technique, Vertex Merging, in conjunction with Bidirection Path Tracing, or Vertex Connection, it is possible to combine these two techinques using \gls{mis} to achieve robustness. This new combined algorithm starts like Bidirectional Path Tracing by tracing a set of paths from the light sources, and stores the vertices in a range search acceleration structure. Then when the camera sub-paths are being traced, each vertex of the camera sub-path is connected to all the vertices of the respective light sub-path, and searches the acceleration structure for any vertices from any light sub-path viable for merging.
+
 This combined light transport algorithm maintains the high convergence rate of Bidirectional Path Tracing, while being able to handle caustics efficiently like Photon Mapping. The efficiency of this algorithm can still be improved by applying \gls{mcmc} techniques on top of it \citep{Georgiev}.
 
 \section{Heterogeneous Systems}
@@ -119,7 +146,7 @@ An heterogeneous system is a computing system with different processing devices 
 
 \subsection{DICE}
 
-Developing applications for heterogeneous platforms is a difficult task as explained previously. DICE \citep{Barbosa} is an application framework for developing heterogeneous applications that aims to ease the process of development for heterogeneous platforms containing both \gls{cpu} and \gls{gpu}.
+Developing applications for heterogeneous platforms is a difficult task as explained previously. DICE \citep{Barbosa} is an application framework for developing heterogeneous applications that aims to ease the process of development for heterogeneous platforms containing both \gls{cpu} and \gls{gpu}, with an emphasis on irregular workloads.
 
 %DICE uses a task model in which tasks are scheduled by the system throughout the various available processors. The workload is distributed by generating sub-tasks of finer granularity and assigning them to different processors. The main features of DICE are an adaptative scheduler that analyses the execution time of each submited task and uses that information to perform load balancing operations, and a memory manager that simplifies different addressing spaces by presenting the developer only one address space and transparently preforming copies between different addressing spaces whenever required \citep{Barbosa}.
 

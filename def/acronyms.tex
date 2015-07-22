@@ -1,24 +1,31 @@
-\newacronym{vcm}{VCM}{Vertex Connection and Merging}
-\newacronym{mlt}{MLT}{Metropolis Light Transport}
-\newacronym{pt}{PT}{Path Tracing}
-\newacronym{bdpt}{BPT}{Bidirectional Path Tracing}
-\newacronym{pm}{PM}{Photon Mapping}
-\newacronym{ppm}{PPM}{Progressive Photon Mapping}
-\newacronym{bpm}{BPM}{Bidirectional Photon Mapping}
+\renewcommand{\glossarymark}[1]{\markboth{\MakeUppercase{#1}}{\MakeUppercase{#1}}}
+\renewcommand{\glsclearpage}{\cleardoublepage}
+\setlength{\glspagelistwidth}{\textwidth}
+\setlength{\glslistdottedwidth}{.75\hsize}
 
-\newacronym{mis}{MIS}{Multiple Importance Sampling}
-
-\newacronym{cpu}{CPU}{Central Processing Unit}
-\newacronym{gpu}{GPU}{Graphics Processing Unit}
-
-\newacronym{mcmc}{MCMC}{Markov Chain Monte Carlo}
-
-\newacronym{mic}{MIC}{Many Integrated Core}
-
-\newacronym{ht}{HT}{Hyper Threading}
-
-\newacronym{sse}{SSE}{Streaming SIMD Extensions}
-\newacronym{avx}{AVX}{Advanced Vextor Extensions}
-\newacronym{simd}{SIMD}{Single Instruction Multiple Data}
-
-\newacronym{rmse}{RMSE}{Root Mean Squared Error}
+\makeatletter
+\newcommand\ackname{Acknowledgements}
+\if@titlepage
+  \newenvironment{acknowledgements}{%
+      \titlepage
+      \null\vfil
+      \@beginparpenalty\@lowpenalty
+      \begin{center}%
+        \bfseries \ackname
+        \@endparpenalty\@M
+      \end{center}}%
+     {\par\vfil\null\endtitlepage}
+\else
+  \newenvironment{acknowledgements}{ %
+      \if@twocolumn
+        \section*{\ackname}%
+      \else
+        \small
+        \begin{center}%
+          {\bfseries \ackname\vspace{-.5em}\vspace{\z@}}%
+        \end{center}%
+        \quotation
+      \fi}
+      {\if@twocolumn\else\endquotation\fi}
+\fi
+\makeatother

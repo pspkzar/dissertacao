@@ -11,34 +11,28 @@
   cleardoublepage=empty
 ]{scrbook}
 
-\usepackage{lipsum}
-\usepackage[linedheaders,parts,pdfspacing]{classicthesis}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{mathtools}
-\usepackage{acronym}
 \usepackage{dissertation}
-\usepackage{multirow}
-\usepackage{pdfpages}
 \usepackage{float}
-\usepackage{svg}
-%\usepackage[acronym]{glossaries}
-
+\usepackage{acronym}
 % Title
-\title{Advanced Light Transport Algorithms on Heterogeneous Platforms: evaluation of the DICE framework}
+
+\titleA{Advanced Light Transport Algorithms  }
+\titleB{on Heterogeneous Platforms:}
+\titleC{evaluation of the DICE framework}
 
 % Author
+
 \author{César Morais Perdigão}
 
-% Supervisor
-\def\supervisor{%
-	Luís Paulo Peixoto dos Santos
-\\
-	Alberto José G. de C. Proença
-}
+% Supervisor(es)
+
+\supervisor{Luís Paulo Peixoto dos Santos}
+
+\cosupervisor{Alberto José G. de C. Proença}
 
 % Date
-\date{\today}
+
+\date{\myear} % change to text if date is not today
 
 %%Defines
 %\def \... {..}
@@ -60,31 +54,56 @@
 \begin{document}
 	
 % Add acronym definitions
-\input{def/acronyms.tex}
     
+\newacronym{vcm}{VCM}{Vertex Connection and Merging}
+\newacronym{mlt}{MLT}{Metropolis Light Transport}
+\newacronym{pt}{PT}{Path Tracing}
+\newacronym{bdpt}{BPT}{Bidirectional Path Tracing}
+\newacronym{pm}{PM}{Photon Mapping}
+\newacronym{ppm}{PPM}{Progressive Photon Mapping}
+\newacronym{bpm}{BPM}{Bidirectional Photon Mapping}
+
+\newacronym{mis}{MIS}{Multiple Importance Sampling}
+
+\newacronym{cpu}{CPU}{Central Processing Unit}
+\newacronym{gpu}{GPU}{Graphics Processing Unit}
+
+\newacronym{mcmc}{MCMC}{Markov Chain Monte Carlo}
+
+\newacronym{mic}{MIC}{Many Integrated Core}
+
+\newacronym{ht}{HT}{Hyper Threading}
+
+\newacronym{sse}{SSE}{Streaming SIMD Extensions}
+\newacronym{avx}{AVX}{Advanced Vextor Extensions}
+\newacronym{simd}{SIMD}{Single Instruction Multiple Data}
+
+\newacronym{rmse}{RMSE}{Root Mean Squared Error}
+
 % Cover page ---------------------------------------------
-\sf
-	\pagenumbering{alph}
-	\thispagestyle{empty}
+%	\thispagestyle{empty}
 	\input{def/title}
 \rm
 	\cleardoublepage
 %---------------------------------------------------------
+	\pagenumbering{alph}
+	\setcounter{page}{0}
+%---------------------------------------------------------
 % Add acknowledgements
 
 \chapter*{Acknowledgements}
-%Write acknowledgements here
+Write acknowledgements here
 
 	\cleardoublepage
 	
 % Add abstracts (en,pt) -----------------------------------------------------------
 \chapter*{Abstract}
-Physically based rendering is an unsolved challenge, as there are many efficient light transport algorithms, although none is robust enough to handle every possible situation, lighting and scene configuration. The performance of such techniques can be enhanced using two different approaches: more efficient and robust algorithms and the use of more computational power. Although most modern computers have both powerful CPUs and GPUs, most current implementations of light transport algorithms only take advantage of one of these processors. Implementing new light transport algorithms such as Vertex Connection and Merging on these hybrid platforms, using both CPU and GPU, may provide more efficient results, although the suitability of such algorithms for heterogeneous computing platforms has not been tested yet, and that is the main goal of this project.
+	\input{chapters/abstract_en.tex}
 
 	\cleardoublepage
 
 \chapter*{Resumo}
-A sintese de imagens fotorrealistas é um desafio ainda por resolver, dado que existem muitos algoritmos de transporte de luz eficientes, porem nenhum lida com todas as situações de forma robusta. O desempenho destas técnicas pode ser melhorado usando algoritmos de transporte de luz mais eficientes e robustos bem como usando mais poder computacional. Apesar da maioria dos computadores modernos ter disponível poderosos CPU's e GPU's, a maioria das implementações utiliza apenas um destes processadores. Implementar novos algoritmos de transporte de luz tal como o Vertex Connection and Merging nestas plataformas hibridas pode trazer ganhos de desempenho, porem nenhum teste para avaliar a adequabilidade destes algoritmos para sistemas heterogéneos foi efetuado, e é esse o principal objectivo deste projeto.
+	\input{chapters/abstract_pt.tex}
 
 	\cleardoublepage
 	
@@ -125,8 +144,6 @@ A sintese de imagens fotorrealistas é um desafio ainda por resolver, dado que e
 
 \input{chapters/experiment.tex}
 \input{chapters/conclusion.tex}
-
-
 		
 \bookmarksetup{startatroot} % Ends last part.
 \addtocontents{toc}{\bigskip} % Making the table of contents look good.
@@ -147,5 +164,13 @@ A sintese de imagens fotorrealistas é um desafio ainda por resolver, dado que e
 
 
 	
+\begin{backcover}
+\thispagestyle{empty} \pagecolor{grey} \textcolor{white} {\fontfamily{phv}\fontseries{mc}\selectfont ~\vfill
+\noindent
+NB: place here information about funding, FCT project, etc in which the work is framed. Leave empty otherwise.
+%
+\vfill ~}
+\end{backcover}
+
 \end{document}
 
