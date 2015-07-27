@@ -6,3 +6,7 @@
 
 %The unified memory address space abstraction supported by the DICE framework will be assessed in terms of how it handles such data requirements: shared data structures and diverse data layouts. The usability of the DICE memory model with regard to supporting the specific requirements to these lighting algorithms will be qualitatively assessed through the additional effort required from the programmer.
 
+One of the main challenges present when addressing heterogeneous systems is the management of multiple implementations, one for each arquitecture. In order to minimize this difficulty, both implementations use most of the basic structures and use specialized ray tracing frameworks, which simplifies development. Another important aspecto to take into account is to minimize communication across devices, which can be costly.
+
+Other problem specific challenges is load ballancing, which is an issue as whith Monte Carlo methods the workloads may be highly irregular, issue that should be addressed by the DICE scheduler.
+
