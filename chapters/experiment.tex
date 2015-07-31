@@ -4,7 +4,14 @@
 
 In order to evaluate the suitability of advanced light transport algorithms to heterogeneous systems, optimized implementations of all algorithms were developed for both \gls{cpu} and \gls{gpu}. These implementations were developed using specialized ray tracing libraries, namely Nvidia Optix \citep{parker2010optix} and Intel Embree \citep{wald2014embree}.
 
-Integrating both \gls{cpu} and \gls{gpu} implementations using DICE was simple, although some adaptations were applied in order to improve efficiency. DICE considers every \gls{cpu} core as an independant device, the same way it considers a \gls{gpu} for the purpose of work sharing. However, for photon mapping based algorithms this is innapropriate because if image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory. In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use.
+
+There are two possible shcemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photton based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory.
+
+In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use. This approach was applied to every developed algorithm in order to ease development and to allow an algorithm independent DICE configuration.
+
+%Integrating both \gls{cpu} and \gls{gpu} implementations using DICE was simple, although some adaptations were applied in order to improve efficiency. DICE considers every \gls{cpu} core as an independant device, the same way it considers a \gls{gpu} for the purpose of work sharing. However, for photon mapping based algorithms this is innapropriate because if image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory. In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use.
+
+
 
 \section{Methodology}
 
@@ -93,26 +100,8 @@ All the execution times measured indicate that all the algorithms studied are sc
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\linewidth]{img/ptSpeedup.jpg}
-\caption{\label{img:ptSpeedup} Path Tracer Speedup}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{img/bptSpeedup.jpg}
-\caption{\label{img:bptSpeedup} Bidirectional Path Tracer Speedup}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{img/bpmSpeedup.jpg}
-\caption{\label{img:bpmSpeedup} Bidirectional Photon Mapping Speedup}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{img/vcmSpeedup.jpg}
-\caption{\label{img:vcmSpeedup} VCM Speedup}
+\includegraphics[width=0.8\linewidth]{img/speedup.jpg}
+\caption{\label{img:speedup} Speedup Analisys}
 \end{figure}
 
 Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. All algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% to 50\%.
@@ -121,26 +110,8 @@ Every algorithm except Bidirectional Photon Mapping achieve an almost linear spe
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\linewidth]{img/ptEff.jpg}
-\caption{\label{img:ptEff} Path Tracer Efficiency}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{img/bptEff.jpg}
-\caption{\label{img:bptEff} Bidirectional Path Tracer Efficiency}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{img/bpmEff.jpg}
-\caption{\label{img:bpmEff} Bidirectional Photon Mapping Efficiency}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{img/vcmEff.jpg}
-\caption{\label{img:vcmEff} VCM Efficiency}
+\includegraphics[width=0.8\linewidth]{img/efficiency.jpg}
+\caption{\label{img:efficiency} Efficiency Analisys}
 \end{figure}
 
 Every algorithms except Bidirectional Photon Mapping has a parallelization efficiency above 0.9, while this falls to an efficiency of 0.77 using 20 cores. This inefficiency may be due to the high memory access this algorithm has compared to all the other algorithms. Note that even though efficiency drops with increased resources, as expected, the inflection point referred in section ~\ref{sec:texec} is still far from being reached.
@@ -202,6 +173,12 @@ E_h(D) = \frac{S_h(D)}{S_h^*(D)} = \frac{\frac{1}{T_D}}{\sum_{d \in D} \frac{1}{
 \label{eq:HetEff}
 \end{equation}
 Note that neither computing rates nor workload are required to evaluate speedup or efficiency. More importantly, note that efficiency is a ratio between speedups, thus it is independent of the selected reference device; in fact, efficiency can be evaluated from the execution times without ever evaluating speedup and thus without selecting a reference device. Intuitively this is an expected result, since a measure of resources' utilization should not depend on the selection of a given reference device.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{img/hefficiency.jpg}
+\caption{\label{img:efficiency} Heterogeneous Efficiency Analisys}
+\end{figure}
 
 \subsection{Image Quality Results}
 
