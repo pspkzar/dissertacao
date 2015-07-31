@@ -5,7 +5,7 @@
 In order to evaluate the suitability of advanced light transport algorithms to heterogeneous systems, optimized implementations of all algorithms were developed for both \gls{cpu} and \gls{gpu}. These implementations were developed using specialized ray tracing libraries, namely Nvidia Optix \citep{parker2010optix} and Intel Embree \citep{wald2014embree}.
 
 
-There are two possible shcemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photton based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory.
+There are two possible shcemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photon based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory.
 
 In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use. This approach was applied to every developed algorithm in order to ease development and to allow an algorithm independent DICE configuration.
 
@@ -15,7 +15,7 @@ In order to solve these issues, DICE was configured to consider all the \gls{cpu
 
 \section{Methodology}
 
-In order to test the scalability and efficiency of the studied algorithms, the execution times of the studied algorithms were measured using only the \gls{gpu}, and while using only the \gls{cpu} or both, with a varying number of \gls{cpu} cores and threads per core, in order to evaluate the gain of using \gls{ht}. Every time measurement was executed five times, selecting the best time as the final result. The workload distribution between the devices was also measured by the DICE scheduler at the end of the five time measurements. These tests were executed using the Living Room Scene with a resolution of 1024x768 and 50 samples per pixel.
+In order to test the scalability and efficiency of the studied algorithms, the execution times of the studied algorithms were measured using only the \gls{gpu}, and while using only the \gls{cpu} or both, with a varying number of \gls{cpu} cores and threads per core, in order to evaluate the gain of using \gls{ht}. Every time measurement was executed five times, selecting the best time as the final result. The workload distribution between the devices was also measured by the DICE scheduler at the end of the five time measurements, being the final result the best possible distribution calculated by DICE. These results represent the fraction of iterations assigned to each device, which may not be a good performance evaluation metric since the iteration time is not uniform, specially in photon mapping based algorithms, in which the iteration time is dependent on the search radius, which decreases in every iteration. These tests were executed using the Living Room Scene with a resolution of 1024x768 and 50 samples per pixel.
 
 In order to evaluate the image quality produced by the studied algorithms, three scenes were used for testing, each with a different goal. The Sponza scene, courtesy of Crytek, is an outdoor scene with only diffuse materials, but complex geometry nonetheless. The Kitchen scene from Lux Renderer, is an indoor scene with glossy materials. The final and most complex scene, the Living Room, courtesy of Iliyan Georgiev, is an indoor scene as well but with an emphasis on reflected caustics and complex lighting. For every scene a reference image was rendered with \gls{vcm} with 100000 samples per pixel. Then for every algorithm a set of images with an approximate rendering time were produced. All these images were compared to the reference image using the \gls{rmse} metric.
 
@@ -98,15 +98,19 @@ All the execution times measured indicate that all the algorithms studied are sc
 
 \subsection{CPU Speedup Results}
 
+Due to the lack of a clear speedup definition for heterogeneous systems, here is presented only the speedup for the \gls{cpu} implementation. However, in section ~\ref{sec:hefficiency} there is presented an heterogeneous analisys.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{img/speedup.jpg}
 \caption{\label{img:speedup} Speedup Analisys}
 \end{figure}
 
-Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. All algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% to 50\%.
+Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. Although not present in this plot, all algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% to 50\%.
 
 \subsection{CPU Parallelization Eficiency Results}
+
+Due to the lack of a clear efficiency definition for heterogeneous systems, here is presented only the efficiency for the \gls{cpu} implementation. However, in section ~\ref{sec:hefficiency} there is presented an heterogeneous analisys.
 
 \begin{figure}[H]
 \centering
@@ -144,41 +148,49 @@ Every algorithms except Bidirectional Photon Mapping has a parallelization effic
 
 As had been shown by all previous performance metrics these four figures clearly show that the algorithms are able to scale as the number of CPU cores increases. The relative workload processed by the CPU increases with the number of cores, demonstrating that all devices are being used. This behaviour is true and similar for all the four algorithms.
 
-\subsection{Heterogeneous Efficiency}
+\subsection{\label{sec:hefficiency} Heterogeneous Efficiency}
 
-A heterogeneous parallel system, however, is composed by a set $D$ of $p_D$ processing devices, whose computing capabilities are not identical. We use the term {\em device} instead of processor to enhance the fact that some of these computing resources are not necessarily Central Processing Units (CPU); heterogeneous devices can also include Graphics Processing Units (GPU), Digital Signal Processors (DSP), Field Programmable Gate Arrays (FPGA), etc. Even though observed speedup can still be defined relatively to some uni-device system, optimal speedup and efficiency can no longer be defined with respect to $p_D$.
+Although all previous metrics seem to indicate that the tested algorithms use all the resources efficiently, there was no absolute measurement of how well the resources were used.
 
-Let $T_D$ be the workload execution time on a heterogeneous system constituted by the set $D$ of devices; let $T_{\mbox{\tiny ref}}$ be the same workload execution time on a single reference device $\mbox{ref} \in D$. Then heterogeneous speedup is given by
+\cite{Chamberlain98} defined heterogeneous speedup according to equation ~\ref{eq:HetSpeedUp}, where $T_{\mbox{\tiny ref}}$ is a reference execution time and $T_D$ is the execution time on an hetereogeneous system constituted by the set $D$ of devices.
+
 \begin{equation}
 S_h(D) = \frac{T_{\mbox{\tiny ref}}}{T_D}
 \label{eq:HetSpeedUp}
 \end{equation}
-Chamberlain et al. \cite{Chamberlain98} defined heterogeneous speedup according to equation \ref{eq:HetSpeedUp} and further suggest that the most powerful device is used as reference. If $T_d$ is the workload execution time on a single device $d \in D$, then the most powerful device is the one exhibiting the minimum $T_d$.
 
-Optimal heterogeneous speedup, $S_h^*(D)$, can not be defined as a function of the number of devices, $p_D$, in the set $D$ of used devices, because these contribute differently to minimize execution time. Chamberlain et al. \cite{Chamberlain98} express $S_h^*(D)$ as a ratio of computing rates. 
+The optimal heterogeneous speedup, $S_h^*(D)$, can not be defined as function of the number of used devices, because different devices offer different amounts of computational power. \cite{Chamberlain98} expressed this ideal speedup as a ratio of computing rates. 
 
-Let the computation rate for each device $d \in D$ for a given workload $W$ be defined as $R_d = \frac{W}{T_d}$. Note that $W$ is not strictly defined in terms of how it is measured or on which units it is expressed; throughout this paper it is only used to derive expressions for the presented performance related metrics. The only requirement is that this is a nominal workload, in the sense that it depends only on the used algorithm and problem size, but is independent on the number of devices $p_D$ in $D$ \cite[p.~23]{Hockney96}. Intuitively, the computing rate available on the set $D$ of devices is given by the sum of the individual rates of all devices in $D$, i.e.,
+Being the computing rate for the device $d \in D$ for a given workload $W$ be $R_d = \frac{W}{T_d}$, then the ideal computing rate is the sum of all the computing rates of all the devices $d \in D$.
+
 \begin{equation}
 R^*_D = \sum_{d \in D} R_d = W \sum_{d \in D} \frac{1}{T_d}
 \label{eq:StarCapacity}
 \end{equation}
-Chamberlain et al. \cite{Chamberlain98} define $S_h^*(D)$ as the ratio between available computing rate and the computing rate of the reference device:
+
+\cite{Chamberlain98} define $S_h^*(D)$ as the ratio between available computing rate and the computing rate of the reference device:
+
 \begin{equation}
 S^*_h(D) = \frac{R^*_D}{R_{\mbox{\tiny ref}}} = T_{\mbox{\tiny ref}} \sum_{d \in D} \frac{1}{T_d}
 \label{eq:StarHetSpeedUp}
 \end{equation}
+
 Given the definitions of heterogeneous speedup and optimal heterogeneous speedup (equations \ref{eq:HetSpeedUp} and \ref{eq:StarHetSpeedUp}), heterogeneous efficiency can thus be defined as the ratio of both
+
 \begin{equation}
-E_h(D) = \frac{S_h(D)}{S_h^*(D)} = \frac{\frac{1}{T_D}}{\sum_{d \in D} \frac{1}{T_d}}
+E_h(D) = \frac{S_h(D)}{S_h^*(D)} = \frac{R_D}{R^*_D} = \frac{\frac{1}{T_D}}{\sum_{d \in D} \frac{1}{T_d}}
 \label{eq:HetEff}
 \end{equation}
-Note that neither computing rates nor workload are required to evaluate speedup or efficiency. More importantly, note that efficiency is a ratio between speedups, thus it is independent of the selected reference device; in fact, efficiency can be evaluated from the execution times without ever evaluating speedup and thus without selecting a reference device. Intuitively this is an expected result, since a measure of resources' utilization should not depend on the selection of a given reference device.
+
+Given these definitions, it is possible to calculate the efficiency of the heterogeneous implementations using one \gls{gpu} and a varying number of \gls{cpu} cores, as depicted in the figure ~\ref{img:hefficiency}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{img/hefficiency.jpg}
-\caption{\label{img:efficiency} Heterogeneous Efficiency Analisys}
+\caption{\label{img:hefficiency} Heterogeneous Efficiency Analisys}
 \end{figure}
+
+All algorithms achive an heterogeneous efficiency above 0.9, except \gls{bpm}. As with \gls{cpu} efficiency, even though it drops with the increase of resourses, an inflection point is far from being reached.
 
 \subsection{Image Quality Results}
 
