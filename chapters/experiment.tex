@@ -5,7 +5,7 @@
 In order to evaluate the suitability of advanced light transport algorithms to heterogeneous systems, optimized implementations of all algorithms were developed for both \gls{cpu} and \gls{gpu}. These implementations were developed using specialized ray tracing libraries, namely Nvidia Optix \citep{parker2010optix} and Intel Embree \citep{wald2014embree}.
 
 
-There are two possible shcemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photon based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory.
+There are two possible schemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photon based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration since the photon map, which would be generated concurrently across the devices, has to be shared among them. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory.
 
 In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use. This approach was applied to every developed algorithm in order to ease development and to allow an algorithm independent DICE configuration.
 
@@ -152,7 +152,7 @@ As had been shown by all previous performance metrics these four figures clearly
 
 Although all previous metrics seem to indicate that the tested algorithms use all the resources efficiently, there was no absolute measurement of how well the resources were used.
 
-\cite{Chamberlain98} defined heterogeneous speedup according to equation ~\ref{eq:HetSpeedUp}, where $T_{\mbox{\tiny ref}}$ is a reference execution time and $T_D$ is the execution time on an hetereogeneous system constituted by the set $D$ of devices.
+\cite{Chamberlain98} defined heterogeneous speedup according to equation ~\ref{eq:HetSpeedUp}, where $T_{\mbox{\tiny ref}}$ is the execution time on a reference device selected according to some criterium and $T_D$ is the execution time on an hetereogeneous system constituted by the set $D$ of devices.
 
 \begin{equation}
 S_h(D) = \frac{T_{\mbox{\tiny ref}}}{T_D}
@@ -161,7 +161,7 @@ S_h(D) = \frac{T_{\mbox{\tiny ref}}}{T_D}
 
 The optimal heterogeneous speedup, $S_h^*(D)$, can not be defined as function of the number of used devices, because different devices offer different amounts of computational power. \cite{Chamberlain98} expressed this ideal speedup as a ratio of computing rates. 
 
-Being the computing rate for the device $d \in D$ for a given workload $W$ be $R_d = \frac{W}{T_d}$, then the ideal computing rate is the sum of all the computing rates of all the devices $d \in D$.
+Let the computing rate for the device $d \in D$ for a given workload $W$ be $R_d = \frac{W}{T_d}$, then the ideal computing rate is the sum of all the computing rates of all the devices $d \in D$.
 
 \begin{equation}
 R^*_D = \sum_{d \in D} R_d = W \sum_{d \in D} \frac{1}{T_d}
