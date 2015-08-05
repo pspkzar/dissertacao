@@ -2,11 +2,11 @@
 
 Physically based rendering is the process of generating synthetic images indistinguishable from the perception of the real world. These images are generated according to a geometric model of the scene and models for every material and light source present. With this information is possible to simulate the light transport process from the light sources to the camera through the scene in order to synthesize an image. With this simulation, the radiance for each pixel of the image is determined, being radiance the radiant power incident on a given region per area and solid angle unit.
 
-Physically based rendering is a computationally intensive process, and the use of heterogeneous systems may provide aditional computation power, at the cost of a more difficult development. This issue is addressed by frameworks such as DICE \citep{Barbosa} and StarPU \citep{augonnet2011starpu} that aim to ease the development of heterogeneous applications as well as scheduling and memory management across devices.
+Physically based rendering is a computationally intensive process, and the use of heterogeneous systems may provide additional computation power, at the cost of a more difficult development. This issue is addressed by frameworks such as DICE \citep{Barbosa} and StarPU \citep{augonnet2011starpu} that aim to ease the development of heterogeneous applications as well as scheduling and memory management across devices.
 
 \section{Path Tracing}
 
-One of the first solutions to the global ilumination was introduced by \cite{Kajiya} when he defined the problem of rendering as the resolution of an integral equation, also know as the rendering equation.
+One of the first solutions to the global illumination was introduced by \cite{Kajiya} when he defined the problem of rendering as the resolution of an integral equation, also know as the rendering equation.
 
 \begin{equation}
 I(x,x')=g(x,x')\left[e(x,x')+\int_{S}^{} \rho(x,x',x'')I(x',x'')dx''\right]
@@ -18,12 +18,12 @@ Where:
 \begin{tabular}{r l}
 $I(x,x')$ & is related to the intensity of light passing from point $x$ to $x'$ \\
 $g(x,x')$ & is the geometric term \\
-$e(x,x')$ & is related to the intensity of emited light from $x$ to $x'$ \\
+$e(x,x')$ & is related to the intensity of emitted light from $x$ to $x'$ \\
 $\rho(x,x',x'')$ & is related to the intensity of light scattered from $x''$ to $x$ through $x'$\\
 \end{tabular}
 \\
 
-This equation translates to how much light arrives at a given point from a given direction. This integral equation can not be calculated analitically, so its expected value is calculated through Monte Carlo Integration. Based on this, the goal is to trace a light transport path, with points $x_0$ .. $x_n$ in which $x_0$ is a point on a light source and $x_n$ is a point on the camera lens. 
+This equation translates to how much light arrives at a given point from a given direction. This integral equation can not be calculated analytically, so its expected value is calculated through Monte Carlo Integration. Based on this, the goal is to trace a light transport path, with points $x_0$ .. $x_n$ in which $x_0$ is a point on a light source and $x_n$ is a point on the camera lens. 
 Commonly, these paths are traced from the camera to the light source, to ensure that paths sampled fall in the image plane and to capture reflection and refraction paths. However caustic paths have a very low sampling probability, reaching zero if using point light sources. Tracing paths form the light source to the camera however sample caustics more effectively but specular paths can not be sampled.
 
 \begin{figure}[H]
@@ -47,7 +47,7 @@ In order to make the algorithm more robust, \cite{Veach} proposed the Path Space
 I_j=\int_\Omega f_j(x)d\mu (x)
 \label{eq:path_int}
 \end{equation}
-where $\Omega$ is the set of all light transport paths of all lenghts, $\mu$ is a measure on this space of paths and $f_j$ is the measurement contribution function.
+where $\Omega$ is the set of all light transport paths of all lengths, $\mu$ is a measure on this space of paths and $f_j$ is the measurement contribution function.
 
 Multiple Importance Sampling is a technique that attempts to combine multiple sampling techniques in a probably good way in order to minimize variance.
 \begin{equation}
@@ -59,14 +59,14 @@ Being $n$ the number of sampling techniques and $n_i$ the number of samples for 
 \omega_i (x) = \frac{n_i p_i (x)}{\sum _k n_k p_k (x)}
 \label{eq:balance}
 \end{equation}
-In order to use \gls{mis} in Bidirectional Path Tracing one must consider that each path of a given length can be sampled in several ways: a path of lengh $n$ can be sampled by using whatever light and camera sub-paths of $s$ and $t$ vertices as long as $n=s+t+1$. Given this it is just needed to apply the heuristic above to calculate the respective weight for that path.
+In order to use \gls{mis} in Bidirectional Path Tracing one must consider that each path of a given length can be sampled in several ways: a path of length $n$ can be sampled by using whatever light and camera sub-paths of $s$ and $t$ vertices as long as $n=s+t+1$. Given this it is just needed to apply the heuristic above to calculate the respective weight for that path.
 
 \begin{equation}
 I=\sum_{s \geq 0}\sum_{t \geq 0}\omega_{s,t}(x_{s,t})\frac{f_j (x_{s,t})}{p_{s,t}(x_{s,t})}
 \label{eq:bpt}
 \end{equation}
 
-This algorithm is much more robust than path tracing, as it can sample many light transport paths efficiently and robustly. Nonetheless, this algorithm is not perfect for every situation, as it has dificulty sampling reflected caustics \citep{Georgiev}.
+This algorithm is much more robust than path tracing, as it can sample many light transport paths efficiently and robustly. Nonetheless, this algorithm is not perfect for every situation, as it has difficulty sampling reflected caustics \citep{Georgiev}.
 
 %\section{Metropolis Light Trasport}
 
@@ -87,7 +87,7 @@ This algorithm is much more robust than path tracing, as it can sample many ligh
 
 The previous algorithms attempted to solve the problem of global illumination by sampling light transport paths from the light source to the camera. \gls{pm} however, attempts to calculate the radiance at any given point by estimating a photon density \citep{Jensen}.
 
-In a first phase the algorithm traces packets of photons from the light sources into the scene and stores them in a range search acceleration structure, the photon map. In a second phase, rays are traced from the camera and the photon map is consulted to calculate the photon density in the neighborhood of the hitpoints. One technique used to reduce the variance of this algorithm is the use of distinct photon maps for caustics and diffuse indirect ilumination and consult these maps differently: the caustics map is accessed directly while for diffuse ilumination a final gathering step is performed. In final gathering, rays are traced from the hit points into the scene and in the intersections of these rays the diffuse map is consulted.
+In a first phase the algorithm traces packets of photons from the light sources into the scene and stores them in a range search acceleration structure, the photon map. In a second phase, rays are traced from the camera and the photon map is consulted to calculate the photon density in the neighborhood of the hit points. One technique used to reduce the variance of this algorithm is the use of distinct photon maps for caustics and diffuse indirect illumination and consult these maps differently: the caustics map is accessed directly while for diffuse illumination a final gathering step is performed. In final gathering, rays are traced from the hit points into the scene and in the intersections of these rays the diffuse map is consulted.
 
 \begin{figure}[H]
 \centering
@@ -95,15 +95,15 @@ In a first phase the algorithm traces packets of photons from the light sources 
 \caption{\label{img:pmdiag} Photon Mapping Algorithm}
 \end{figure}
 
-This algorithm, unlike all the previously mentioned algorithms, introduces bias, because there is an aproximation of the photon map search area to an infinitly small area. This causes the algorithm to not converge to the correct result but to an aproximation with an unknown error (bias).
+This algorithm, unlike all the previously mentioned algorithms, introduces bias, because there is an approximation of the photon map search area to an infinity small area. This causes the algorithm to not converge to the correct result but to an approximation with an unknown error (bias).
 
-Although biased, this algorithm performs well in the handling of caustics, even reflected and refracted caustics. However, the convergence rate for the overall diffuse ilumination is smaller than that of Bidirectional Path Tracing \citep{Georgiev}. Another backdraw of this algorithm is memory usage, since the more photons used to rendering, the larger the photon map has to be.
+Although biased, this algorithm performs well in the handling of caustics, even reflected and refracted caustics. However, the convergence rate for the overall diffuse illumination is smaller than that of Bidirectional Path Tracing \citep{Georgiev}. Another back draw of this algorithm is memory usage, since the more photons used to rendering, the larger the photon map has to be.
 
 \subsection{Progressive Photon Mapping}
 
 Photon Mapping is a biased algorithm, although if the number of photons used tends to infinity and the search radius in the photon map tends to zero, the bias is zero in the limit. This makes the bias in the algorithm consistent and this property can be used to improve the quality of the algorithm.
 
-Instead of storing the positions of photons in the photon map, the hitpoints from the camera rays are stored in an acceleration structure. Then, when photons are traced from the light sources, a range search looks for any hitpoint in the neighborhood and the contribution of that photon is added to the corresponding pixels. In each iteration of the algorithm the search radius is decreased according to a constant parameter of the algorithm \citep{Hachisuka}.
+Instead of storing the positions of photons in the photon map, the hit points from the camera rays are stored in an acceleration structure. Then, when photons are traced from the light sources, a range search looks for any hit point in the neighborhood and the contribution of that photon is added to the corresponding pixels. In each iteration of the algorithm the search radius is decreased according to a constant parameter of the algorithm \citep{Hachisuka}.
 
 \begin{figure}[H]
 \centering
@@ -111,7 +111,7 @@ Instead of storing the positions of photons in the photon map, the hitpoints fro
 \caption{\label{img:ppmdiag} Progressive Photon Mapping Algorithm}
 \end{figure}
 
-This alteration to the algorithm improves the efficiency of Photon Mapping, namely in terms of memory usage, now fixed proportionaly to the size of the image, instead of proportional to the number of photons used. Although with Progressive Photon Mapping the bias may be zero in the limit, this algorithm also produces more useless work the longer it runs, since as the search radius decreases with the execution, more photons are traced that do not contribute to the final image.
+This alteration to the algorithm improves the efficiency of Photon Mapping, namely in terms of memory usage, now fixed proportional to the size of the image, instead of proportional to the number of photons used. Although with Progressive Photon Mapping the bias may be zero in the limit, this algorithm also produces more useless work the longer it runs, since as the search radius decreases with the execution, more photons are traced that do not contribute to the final image.
 
 \subsection{Bidirectional Photon Mapping}
 
@@ -123,14 +123,14 @@ This algorithm can also be progressive by reducing the search radius of the phot
 
 \section{Vertex Connection and Merging}
 
-This new algorithm proposed by \cite{Georgiev}, combines two complementary algorithms in order to create a more robust rendering algorithm. As seen previously, Bidirectional Path Tracing has high convergence rate and can handle most types of ilumination effects, however it has problem rendering reflected or refracted caustics. On the other hand, the family of Photon Mapping algorithms has no problem dealing with caustics but has an overall low convergence rate. The combination of these two algorithms into a new one, Vertex Connection and Merging, through \gls{mis} is much more robust than the original algorithms alone.
+This new algorithm proposed by \cite{Georgiev}, combines two complementary algorithms in order to create a more robust rendering algorithm. As seen previously, Bidirectional Path Tracing has high convergence rate and can handle most types of illumination effects, however it has problem rendering reflected or refracted caustics. On the other hand, the family of Photon Mapping algorithms has no problem dealing with caustics but has an overall low convergence rate. The combination of these two algorithms into a new one, Vertex Connection and Merging, through \gls{mis} is much more robust than the original algorithms alone.
 
 The combination of Photon Mapping and Bidirectional Path Tracing required the reformulation of one of these algorithms, since they calculate the image values through different mathematical frameworks: while Bidirectional Path Tracing calculates an integral on the path space, Photon Mapping calculates a photon density estimation. To achieve this, Photon Mapping was reformulated as a path sampling technique, where a path is successfully sampled if the last vertex of the light sub-path falls into the search area of a vertex from the camera sub-path. These two vertices are effectively merged so the last vertex in the light sub-path is not considered part of the generated path itself but only as a conditional test of the acceptance of this new path. For this new path sampling technique, called Vertex Merging, an associated probability density function is needed to use multiple importance sampling. 
 \begin{equation}
 p_{VM}=[\pi r^2 p(x_{s-1}\xrightarrow{}x_{s}^{*})]p_{VC}(x)
 \label{eq:pvm}
 \end{equation}
-where $p_{VC}(x)$ is the probability of generating path $x$ through Bidirectional Path Tracing and the initial part is the probability density funcion for the last light sub-path vertex to intersect the merging area of the last camera sub-path vertex.
+where $p_{VC}(x)$ is the probability of generating path $x$ through Bidirectional Path Tracing and the initial part is the probability density function for the last light sub-path vertex to intersect the merging area of the last camera sub-path vertex.
 
 \begin{figure}[H]
 \centering
@@ -138,13 +138,13 @@ where $p_{VC}(x)$ is the probability of generating path $x$ through Bidirectiona
 \caption{\label{img:vcmdiag} Vertex Connection and Merging Algorithm}
 \end{figure}
 
-With a new path sampling technique, Vertex Merging, in conjunction with Bidirection Path Tracing, or Vertex Connection, it is possible to combine these two techinques using \gls{mis} to achieve robustness. This new combined algorithm starts like Bidirectional Path Tracing by tracing a set of paths from the light sources, and stores the vertices in a range search acceleration structure. Then when the camera sub-paths are being traced, each vertex of the camera sub-path is connected to all the vertices of the respective light sub-path, and searches the acceleration structure for any vertices from any light sub-path viable for merging.
+With a new path sampling technique, Vertex Merging, in conjunction with Bidirectional Path Tracing, or Vertex Connection, it is possible to combine these two techniques using \gls{mis} to achieve robustness. This new combined algorithm starts like Bidirectional Path Tracing by tracing a set of paths from the light sources, and stores the vertices in a range search acceleration structure. Then when the camera sub-paths are being traced, each vertex of the camera sub-path is connected to all the vertices of the respective light sub-path, and searches the acceleration structure for any vertices from any light sub-path viable for merging.
 
 This combined light transport algorithm maintains the high convergence rate of Bidirectional Path Tracing, while being able to handle caustics efficiently like Photon Mapping. The efficiency of this algorithm can still be improved by applying \gls{mcmc} techniques on top of it \citep{Georgiev}.
 
 \section{Heterogeneous Systems}
 
-An heterogeneous system is a computing system with different processing devices with different architectures. Indeed, most average computers are heterogeneous systems that contain a multi-core \gls{cpu} used for most tasks and a massivelly parallel \gls{gpu} used mainly for graphics rasterization. These two processors have separate addressing spaces, communication between them is costly, and even the programming model is different between them. This imposes difficulties to developers and inhibits portability of the code across diferent platforms \citep{Kunzman}. However there are potential performance gains in using both devices since there is additional computational power available. 
+An heterogeneous system is a computing system with different processing devices with different architectures. Indeed, most average computers are heterogeneous systems that contain a multi-core \gls{cpu} used for most tasks and a massively parallel \gls{gpu} used mainly for graphics rasterization. These two processors have separate addressing spaces, communication between them is costly, and even the programming model is different between them. This imposes difficulties to developers and inhibits portability of the code across different platforms \citep{Kunzman}. However there are potential performance gains in using both devices since there is additional computational power available. 
 
 \subsection{DICE}
 
@@ -152,9 +152,9 @@ Developing applications for heterogeneous platforms is a difficult task as expla
 
 %DICE uses a task model in which tasks are scheduled by the system throughout the various available processors. The workload is distributed by generating sub-tasks of finer granularity and assigning them to different processors. The main features of DICE are an adaptative scheduler that analyses the execution time of each submited task and uses that information to perform load balancing operations, and a memory manager that simplifies different addressing spaces by presenting the developer only one address space and transparently preforming copies between different addressing spaces whenever required \citep{Barbosa}.
 
-DICE uses a task driven model that schedules work across processing devices through a granularity refinement. When a task is submited to the scheduler, sub-tasks of finer granularity are generated and executed on the available devices. This scheduler analises the execution time of the task on each device to enhance the workload distribution in order to attain maximum performance. DICE also provides a virtual shared memory manager that abstracts different addressing spaces by presenting the developer only one address space and transparently performing copies between different addressing spaces whenever required.
+DICE uses a task driven model that schedules work across processing devices through a granularity refinement. When a task is submitted to the scheduler, sub-tasks of finer granularity are generated and executed on the available devices. This scheduler analyses the execution time of the task on each device to enhance the workload distribution in order to attain maximum performance. DICE also provides a virtual shared memory manager that abstracts different addressing spaces by presenting the developer only one address space and transparently performing copies between different addressing spaces whenever required.
 
-DICE tasks support a variety of execution modes. The developer can provide a single kernel and the task can execute automatically on \gls{cpu} and \gls{gpu}, while it is also possible to provide the task with specialized code for each arquitecture. The specialized \gls{gpu} implementation can be provided as a CUDA kernel or as a call to specialized libraries. These possibilities allow a simple programming model while retaining the possibility of refinement, arquitechture specific optimizations and the use of external optimized libraries.
+DICE tasks support a variety of execution modes. The developer can provide a single kernel and the task can execute automatically on \gls{cpu} and \gls{gpu}, while it is also possible to provide the task with specialized code for each architecture. The specialized \gls{gpu} implementation can be provided as a CUDA kernel or as a call to specialized libraries. These possibilities allow a simple programming model while retaining the possibility of refinement, architecture specific optimizations and the use of external optimized libraries.
 
 \subsection{StarPU}
 

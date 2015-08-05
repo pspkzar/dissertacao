@@ -1,13 +1,13 @@
 \chapter{Experimental Results}
 
-\section{Technical Aproach}
+\section{Technical Approach}
 
 In order to evaluate the suitability of advanced light transport algorithms to heterogeneous systems, optimized implementations of all algorithms were developed for both \gls{cpu} and \gls{gpu}. These implementations were developed using specialized ray tracing libraries, namely Nvidia Optix \citep{parker2010optix} and Intel Embree \citep{wald2014embree}.
 
 
-There are two possible schemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photon based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration since the photon map, which would be generated concurrently across the devices, has to be shared among them. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory.
+There are two possible schemes of work decomposition across devices. One is image space decomposition, where each device processes a portion of the image pixels. Another possible alternative is to distribute the algorithm iterations across the devices. In \gls{pt} and \gls{bdpt} the choice between these two approaches is almost irrelevant, however in photon based algorithms (\gls{bpm} and \gls{vcm}) it is not that simple. If image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration since the photon map, which would be generated concurrently across the devices, has to be shared among them. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory. When the number of such cores is significant, the memory requirements are too high for most computing systems.
 
-In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use. This approach was applied to every developed algorithm in order to ease development and to allow an algorithm independent DICE configuration.
+In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed autonomously by the DICE scheduler as a set of independent iterations, eliminating all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excessive memory use. This approach was applied to every developed algorithm in order to ease development and to allow an algorithm independent DICE configuration.
 
 %Integrating both \gls{cpu} and \gls{gpu} implementations using DICE was simple, although some adaptations were applied in order to improve efficiency. DICE considers every \gls{cpu} core as an independant device, the same way it considers a \gls{gpu} for the purpose of work sharing. However, for photon mapping based algorithms this is innapropriate because if image plane division was applied, it would force communication between the \gls{cpu} and the \gls{gpu} in every iteration. If an iteration division was applied, for every \gls{cpu} core a complete photon map would be stored in the main memory. In order to solve these issues, DICE was configured to consider all the \gls{cpu} cores as a monolithic device, leaving the distribution of work in the \gls{cpu} to the application code. The work between the \gls{cpu} and the \gls{gpu} is then distributed in a set of independent iterations, eliminationg all communication needs. Between the \gls{cpu} cores the image plane is divided, eliminating the excesive memory use.
 
@@ -66,9 +66,9 @@ Embree & 2.5.1 \\
 \caption{\label{tab:soft_ver} Software Used}
 \end{table}
 
-\section{Result Analisys}
+\section{Result Analysis}
 
-\subsection{\label{sec:texec}Excution Time Results}
+\subsection{\label{sec:texec}Execution Time Results}
 
 \begin{figure}[H]
 \centering
@@ -98,27 +98,27 @@ All the execution times measured indicate that all the algorithms studied are sc
 
 \subsection{CPU Speedup Results}
 
-Due to the lack of a clear speedup definition for heterogeneous systems, here is presented only the speedup for the \gls{cpu} implementation. However, in section ~\ref{sec:hefficiency} there is presented an heterogeneous analisys.
+Due to the lack of a clear speedup definition for heterogeneous systems, here is presented only the speedup for the \gls{cpu} implementation. However, in section ~\ref{sec:hefficiency} there is presented an heterogeneous analysis.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{img/speedup.jpg}
-\caption{\label{img:speedup} Speedup Analisys}
+\caption{\label{img:speedup} Speedup Analysis}
 \end{figure}
 
-Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achives a speedup of 15.4 using 20 cores. Although not present in this plot, all algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% to 50\%.
+Every algorithm except Bidirectional Photon Mapping achieve an almost linear speedup, while this only achieves a speedup of 15.4 using 20 cores. Although not present in this plot, all algorithms seem to take advantage of Hyper Threading, which increases the overall performance between 30\% to 50\%.
 
-\subsection{CPU Parallelization Eficiency Results}
+\subsection{CPU Parallelization Efficiency Results}
 
-Due to the lack of a clear efficiency definition for heterogeneous systems, here is presented only the efficiency for the \gls{cpu} implementation. However, in section ~\ref{sec:hefficiency} there is presented an heterogeneous analisys.
+Due to the lack of a clear efficiency definition for heterogeneous systems, here is presented only the efficiency for the \gls{cpu} implementation. However, in section ~\ref{sec:hefficiency} there is presented an heterogeneous analysis.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{img/efficiency.jpg}
-\caption{\label{img:efficiency} Efficiency Analisys}
+\caption{\label{img:efficiency} Efficiency Analysis}
 \end{figure}
 
-Every algorithms except Bidirectional Photon Mapping has a parallelization efficiency above 0.9, while this falls to an efficiency of 0.77 using 20 cores. This inefficiency may be due to the high memory access this algorithm has compared to all the other algorithms. Note that even though efficiency drops with increased resources, as expected, the inflection point referred in section ~\ref{sec:texec} is still far from being reached.
+Every algorithm, except Bidirectional Photon Mapping, has a parallelization efficiency above 0.9, while this falls to an efficiency of 0.77 using 20 cores. This inefficiency may be due to the high memory access this algorithm has compared to all the other algorithms. Note that even though efficiency drops with increasing resources, as expected, the inflection point referred in section ~\ref{sec:texec} is still far from being reached.
 
 \subsection{Workload Distribution Results}
 
@@ -146,13 +146,13 @@ Every algorithms except Bidirectional Photon Mapping has a parallelization effic
 \caption{\label{img:vcmwl} VCM Workload Distribution}
 \end{figure}
 
-As had been shown by all previous performance metrics these four figures clearly show that the algorithms are able to scale as the number of CPU cores increases. The relative workload processed by the CPU increases with the number of cores, demonstrating that all devices are being used. This behaviour is true and similar for all the four algorithms.
+As had been shown by all previous performance metrics these four figures clearly show that the algorithms are able to scale as the number of CPU cores increases. The relative workload processed by the CPU increases with the number of cores, demonstrating that all devices are being used. This behavior is similar for all the four algorithms.
 
 \subsection{\label{sec:hefficiency} Heterogeneous Efficiency}
 
 Although all previous metrics seem to indicate that the tested algorithms use all the resources efficiently, there was no absolute measurement of how well the resources were used.
 
-\cite{Chamberlain98} defined heterogeneous speedup according to equation ~\ref{eq:HetSpeedUp}, where $T_{\mbox{\tiny ref}}$ is the execution time on a reference device selected according to some criterium and $T_D$ is the execution time on an hetereogeneous system constituted by the set $D$ of devices.
+\cite{Chamberlain98} defined heterogeneous speedup according to equation ~\ref{eq:HetSpeedUp}, where $T_{\mbox{\tiny ref}}$ is the execution time on a reference device selected according to some criterium and $T_D$ is the execution time on an heterogeneous system constituted by the set $D$ of devices.
 
 \begin{equation}
 S_h(D) = \frac{T_{\mbox{\tiny ref}}}{T_D}
@@ -190,7 +190,7 @@ Given these definitions, it is possible to calculate the efficiency of the heter
 \caption{\label{img:hefficiency} Heterogeneous Efficiency Analisys}
 \end{figure}
 
-All algorithms achive an heterogeneous efficiency above 0.9, except \gls{bpm}. As with \gls{cpu} efficiency, even though it drops with the increase of resourses, an inflection point is far from being reached.
+All algorithms achieve an heterogeneous efficiency above 0.9, except \gls{bpm}. As with \gls{cpu} efficiency, even though it drops with the increase of resources, an inflection point is far from being reached.
 
 \subsection{Image Quality Results}
 
@@ -214,6 +214,6 @@ All algorithms achive an heterogeneous efficiency above 0.9, except \gls{bpm}. A
 
 In the Sponza scene, all algorithms seem to converge to the right solution, however Path Tracing is the best algorithms in this case. This may be due to the outdoor scene configuration where many of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracing, not needing more complex solutions.
 
-In the Kithcen scene, both Bidirectional Path Tracer and Vertex Connecion and Merging algorithms converge to the expected result, although the former is faster for this scene. Both Path tracer and Bidirectional Photon Mapping present lower convergence rates due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces.
+In the Kitchen scene, both Bidirectional Path Tracer and Vertex Connection and Merging algorithms converge to the expected result, although the former is faster for this scene. Both Path tracer and Bidirectional Photon Mapping present lower convergence rates due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces.
 
 In the Living Room scene, Vertex Connection and Merging has the fastest convergence, while the remaining algorithms converges much more slowly. This happened due to the presence of many specular-diffuse-specular paths (namely the reflected caustics in the mirror), which \gls{vcm} was specially designed to capture.
