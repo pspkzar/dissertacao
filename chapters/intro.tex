@@ -1,5 +1,7 @@
 \chapter{Introduction}
 
+\section{Context}
+
 One of the main challenges in computer graphics is physically based rendering, the synthetic creation of images that are perceptually indistinguishable from real world views based on a geometric description of the scene, materials and light sources. There are several algorithms that try to solve this problem, although none of them is yet robust enough to handle every possible situation.
 
 One of the first solutions, \gls{pt} proposed by \cite{Kajiya}, aims to solve this problem by tracing light transport paths starting from the camera until a light source is hit.
@@ -15,11 +17,28 @@ Most recently, an attempt to combine these two approaches was proposed by \cite{
 
 In spite of the differences between the different techniques, what they all have in common is the need for computational power, since all of these algorithms are based on ray tracing, a computationally expensive operation.
 
-Although most computers nowadays contain both a \gls{cpu} and a \gls{gpu}, most commonly seen implementations only use one of these processors, and so waste useful computational power. Developing for these heterogeneous platforms, such that all different devices are effectively and efficiently used by the application, raises a number of challenges. In fact, besides all issues commonly associated with parallel processing (e.g., workload decomposition, communication overheads, load balancing), the heterogeneity of the different devices often implies maintaining different implementations for each architecture as well as dealing with separate memory address spaces.
+Although most computers nowadays contain both multicore chips with multiple \gls{cpu} and a \gls{gpu}, most commonly seen implementations only use one of these types of computational devices, and so waste useful computational power. Developing for these heterogeneous platforms, such that all different devices are effectively and efficiently used by the application, raises a number of challenges. In fact, besides all issues commonly associated with parallel processing (e.g., workload decomposition, communication overheads, load balancing), the heterogeneity of the different devices often implies maintaining different implementations for each architecture as well as dealing with separate memory address spaces.
 Frameworks, such as StarPU \citep{augonnet2011starpu} and DICE \citep{Barbosa} have been proposed to alleviate the application programmer from the challenges risen by heterogeneous systems. 
 
 \section{The Problem and its Challenges}
 
-%In order to solve these issues there is the framework DICE, developed in the University of Texas at Austin. This framework allows an easy workload distribution as well as a memory management system. Mapping light transport algorithms to these heterogeneous systems may lead to performance improvements although no test to evaluate the suitability of these algorithms has been conducted yet. 
+%In order to solve these issues there is the framework DICE, developed in the University of Texas at Austin. This framework allows an easy workload distribution as well as a memory management system. Mapping light transport algorithms to these heterogeneous systems may lead to performance improvements although no test to evaluate the suitability of these algorithms has been conducted yet.
 
-With all this, the main goals for this project are to evaluate the suitability of the above described path integration space rendering algorithms for parallel heterogeneous systems, such as those commonly found on current desktops, I.e., multi-core \gls{cpu} and a \gls{gpu}. The DICE framework has been selected for this evaluation, because it has been developed in close cooperation with our research group and we are interested on identifying its strong and weak points, regarding both performance and usability.
+Light transport algorithms are computationally demanding and there is and improvement potential in efficiently using heterogeneous systems.
+
+With this, the main goals for this project are to evaluate the suitability of the above described path integration space rendering algorithms for parallel heterogeneous systems, such as those commonly found on current desktops, i.e., multicore \gls{cpu} and a \gls{gpu}. The DICE framework has been selected for this evaluation, because it has been developed in close cooperation with our research group and we are interested on identifying its strong and weak points, regarding both performance and usability.
+
+One of the main challenges present when addressing heterogeneous systems is the management of multiple implementations, one for each architecture. In order to minimize this difficulty, both implementations use most of the basic structures and use specialized ray tracing frameworks, which simplifies development. Another important aspect to take into account is to minimize communication across devices, which can be costly.
+
+Other problem specific challenges is load balancing, which is an issue with Monte Carlo methods because the workloads may be highly irregular, issue that should be addressed by the DICE scheduler.
+
+\section{Structure of the Dissertation}
+
+This dissertation is structured in four chapters, being the first the introduction where the problem and the main goals of the project are presented, as well as the structure of the dissertation.
+
+The second chapter presents a background in computation light transport, namely a review of various light transport algorithms and a review on heterogeneous systems programming.
+
+The third chapter presents the experimental work, explaining the methodologies used, the results obtained and finalizing with a discussion of those results.
+
+The fourth and final chapter contains the conclusions, as well as the limitations of this study and possible future work.
+

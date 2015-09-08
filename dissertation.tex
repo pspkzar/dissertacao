@@ -17,8 +17,8 @@
 % Title
 
 \titleA{Advanced Light Transport Algorithms  }
-\titleB{On Heterogeneous Platforms:}
-\titleC{Evaluation Of The DICE Framework}
+\titleB{on Heterogeneous Platforms:}
+\titleC{Evaluation of the DICE Framework}
 
 % Author
 
@@ -80,6 +80,8 @@
 
 \newacronym{rmse}{RMSE}{Root Mean Squared Error}
 
+\newacronym{numa}{NUMA}{Non Uniform Memory Access}
+
 % Cover page ---------------------------------------------
 %	\thispagestyle{empty}
 	\input{def/title}
@@ -93,7 +95,7 @@
 
 \chapter*{Agradecimentos}
 
-Ao meu orientador, Luís Paulo Santos, pela excelente orientação, disponibilidade e pelo rigor exigido na análise do trabalho realisado.
+Ao meu orientador, Luís Paulo Santos, pela excelente orientação, disponibilidade e pelo rigor exigido na análise do trabalho realizado.
 Ao meu co-orientador, Alberto Proença, pelos desafios apresentados, pelas críticas construtivas que fez ao longo to trabalho.
 
 Aos colegas do LabCG, pelo ambiente de trabalho familiar que proporcionaram, que foi uma grande ajuda no desenvolvimento deste trabalho.
@@ -102,10 +104,21 @@ Aos colegas do LabCG, pelo ambiente de trabalho familiar que proporcionaram, que
 
 À Helena por ser sempre a melhor amiga que poderia ter.
 
-À familia da residência, que me deu uma segunda casa ao longo destes cinco anos, em especial ao Pedro Maia, ao Luís Caseiro e ao João Pinto.
+À família da residência, que me deu uma segunda casa ao longo destes cinco anos, em especial ao Pedro Maia, ao Luís Caseiro, Francisco Neves e ao João Pinto.
 
-Por fim, um agradecimento especial à minha mãe, pelos sacrificios, pelo apoio incondicional que tornaram possível tudo isto.
+Por fim, um agradecimento especial à minha mãe, pelos sacrifícios, pelo apoio incondicional que tornaram possível tudo isto.
 
+\newpage
+
+Work funded by the Portuguese agency FCT, \textit{Fundação para a Ciência e Tecnologia}, under the program UT Austin | Portugal.
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{img/fct.jpg}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{img/uta_pt.jpg}
+\end{center}
 
 
 	\cleardoublepage
@@ -129,7 +142,7 @@ Por fim, um agradecimento especial à minha mãe, pelos sacrificios, pelo apoio 
 	% Document
 	\cleardoublepage
     \phantomsection
-    \addcontentsline{toc}{chapter}{Contents}
+    %\addcontentsline{toc}{chapter}{Contents}
 	\tableofcontents
 	
 	\cleardoublepage
@@ -147,14 +160,14 @@ Por fim, um agradecimento especial à minha mãe, pelos sacrificios, pelo apoio 
 	\pagenumbering{arabic}
 	\setcounter{page}{3}
 
-\part{Introductory material}
+%\part{Introductory material}
 
 \input{chapters/intro.tex}
 \input{chapters/state_of_the_art.tex}
 %\input{chapters/challenges.tex}
 
 
-\part{Core of the dissertation}
+%\part{Core of the dissertation}
 
 \input{chapters/experiment.tex}
 \input{chapters/conclusion.tex}

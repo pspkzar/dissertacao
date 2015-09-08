@@ -1,4 +1,4 @@
-\chapter{State of the Art}
+\chapter{Background on Computational Light Transport}
 
 Physically based rendering is the process of generating synthetic images indistinguishable from the perception of the real world. These images are generated according to a geometric model of the scene and models for every material and light source present. With this information is possible to simulate the light transport process from the light sources to the camera through the scene in order to synthesize an image. With this simulation, the radiance for each pixel of the image is determined, being radiance the radiant power incident on a given region per area and solid angle unit.
 
@@ -111,7 +111,7 @@ Instead of storing the positions of photons in the photon map, the hit points fr
 \caption{\label{img:ppmdiag} Progressive Photon Mapping Algorithm}
 \end{figure}
 
-This alteration to the algorithm improves the efficiency of Photon Mapping, namely in terms of memory usage, now fixed proportional to the size of the image, instead of proportional to the number of photons used. Although with Progressive Photon Mapping the bias may be zero in the limit, this algorithm also produces more useless work the longer it runs, since as the search radius decreases with the execution, more photons are traced that do not contribute to the final image.
+This alteration to the algorithm improves the efficiency of Photon Mapping, namely in terms of memory usage, now fixed proportional to the size of the image, instead of proportional to the number of photons used. Although with \gls{ppm} the bias may be zero in the limit, this algorithm also produces more useless work the longer it runs, since as the search radius decreases with the execution, more photons are traced that do not contribute to the final image.
 
 \subsection{Bidirectional Photon Mapping}
 
@@ -144,7 +144,15 @@ This combined light transport algorithm maintains the high convergence rate of B
 
 \section{Heterogeneous Systems}
 
-An heterogeneous system is a computing system with different processing devices with different architectures. Indeed, most average computers are heterogeneous systems that contain a multi-core \gls{cpu} used for most tasks and a massively parallel \gls{gpu} used mainly for graphics rasterization. These two processors have separate addressing spaces, communication between them is costly, and even the programming model is different between them. This imposes difficulties to developers and inhibits portability of the code across different platforms \citep{Kunzman}. However there are potential performance gains in using both devices since there is additional computational power available. 
+An heterogeneous system is a computing system with different processing devices with different architectures. Indeed, most average computers are heterogeneous systems that contain a multicore \gls{cpu} used for most tasks and a massively parallel \gls{gpu} used mainly for graphics rasterization.  In order to achieve peak performance on each type of device, there are specific architecture dependent optimizations that must be implemented by programmers.
+
+When programming \gls{cpu}'s, most parallelism is implicit, in the form of instruction parallelism and the use of vectorial instructions(\gls{simd}). The use of vectorial instructions is critical in order to achieve peak performance, and although the compiler may perform the automatic vectorization of the code, the code must follow a strict pattern for this to happen. \gls{cpu} performance is also dependent on its memory hierarchy model with few registers and a large main memory, with some levels of cache memory to amortize the time cost of accessing the main memory. It is though imperative to use memory locality to avoid cache misses and accessing the main memory which is much slower than accessing the cache memory. Further issues arise with memory hierarchy when introducing thread level parallelism. When multiple cores have a cache line stored in their private cache and that line is altered by one of them, that cache line has to be invalidated and reloaded on all other caches in order to avoid a incoherent state.
+
+Programming \gls{gpu}
+
+These two processors have separate addressing spaces, communication between them is costly, and even the programming model is different between them. This imposes difficulties to developers and inhibits portability of the code across different platforms \citep{Kunzman}. However there are potential performance gains in using both devices since there is additional computational power available. 
+
+
 
 \subsection{DICE}
 
