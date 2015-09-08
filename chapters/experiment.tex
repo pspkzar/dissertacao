@@ -75,7 +75,7 @@ Intel TBB & 4.3 \\
 
 \subsection{\label{sec:texec}Execution Time Results}
 
-Figures ~\ref{img:ptTexec} to ~\ref{img:vcmTexec} present the execution times of the tested algorithms using different device sets. All algorithms show a proportional reduction in execution times with the number of \gls{cpu}'s used.
+Figures ~\ref{img:ptTexec} to ~\ref{img:vcmTexec} present the execution times of the tested algorithms using different device sets. All algorithms show a proportional reduction in execution times with the number of \gls{cpu}'s used. Please note that the "\gls{gpu} only" yellow horizontal line represents a constant value, since no CPU cores are used.
 
 \begin{figure}[H]
 \centering
@@ -123,7 +123,7 @@ Due to the lack of a clear efficiency definition for heterogeneous systems, figu
 
 \subsection{Workload Distribution Results}
 
-Figures ~\ref{img:ptwl} to ~\ref{img:vcmwl} presents the workload distributions between the \gls{cpu}'s and the \gls{gpu}. The relative workload processed by the \gls{cpu} implementation increases with the number of cores used. This behavior is similar for all the four algorithms.
+Figures ~\ref{img:ptwl} to ~\ref{img:vcmwl} presents the workload distributions between the \gls{cpu}'s and the \gls{gpu}.  Remember that this is measured as the fraction of iterations processed by each device and that DICE sees the \gls{cpu} as a single device (image space decomposition being then performed among cores by the rendering application itself). The relative workload processed by the \gls{cpu} implementation increases with the number of cores used. This behavior is similar for all four algorithms.
 
 \begin{figure}[H]
 \centering
@@ -198,11 +198,11 @@ Given these definitions, it is possible to calculate the efficiency of the heter
 
 Figures ~\ref{img:sponzaImgq} to ~\ref{img:livingroomImgq} present the image quality measures in function of the rendering time for the various tested algorithms and test scenes.
 
-In the Sponza scene, all algorithms to converge, being Path Tracing the fastest algorithms in this scene.
+For Sponza the Path Tracer outperforms the remaining algorithms.
 
 In the Kitchen scene, both Bidirectional Path Tracer and Vertex Connection and Merging algorithms converge to the expected result, although the former is faster for this scene. Both Path tracer and Bidirectional Photon Mapping present lower convergence rates.
 
-In the Living Room scene, Vertex Connection and Merging presents the fastest convergence, while the remaining algorithms converges much more slowly.
+In the Living Room scene, Vertex Connection and Merging presents the fastest convergence, while the remaining algorithms converge much more slowly.
 
 \begin{figure}[H]
 \centering
@@ -224,15 +224,15 @@ In the Living Room scene, Vertex Connection and Merging presents the fastest con
 
 \section{Discussion of Results}
 
-All the execution times measured indicate that all the algorithms studied are scalable and take advantage of both devices in the rendering process. Note that no inflection point was reached, i.e., a point above which execution time starts increasing with additional processing devices. It was not possible to further increase the number of devices in order to detect such inflection point. Speedup and efficiency results also show an almost perfect scalability in the \gls{cpu} implementations.
+The execution times measures indicate that all algorithms studied are scalable and take advantage of both devices in the rendering process. Note that no inflection point was reached, i.e., a point above which execution time starts increasing with additional processing devices. In fact, all the curves present a negative slope, meaning that not even an horizontal asymptote (i.e., constant execution time with increasing devices) has been reached. This trend suggests that the above referred inflection point is far from being reached and all algorithms should scale well with additional devices. It was not possible to further increase the number of devices in order to detect such inflection point. Speedup and efficiency results also show an almost perfect scalability in the \gls{cpu} implementations, suggesting that the algorithms would scale well for additional \gls{cpu} cores. This hypothesis would have, however, to be verified experimentally.
 
 Previous research \citep{Palhas2013} has shown scalability issues when using the second processor socket in a \gls{numa} architecture with \gls{ppm}. Although with a slightly lower efficiency, the photon mapping based algorithms developed scale across both sockets. This behavior may be due to the usage of specialized ray tracing and threading libraries, such as Embree and Intel Thread building Bocks.
 
 The developed \gls{bpm} implementation has a lower efficiency than all the remaining algorithms. This may be due to the high memory access this algorithm has compared to all the other algorithms.
 
-Both workload distribution and heterogeneous efficiency results demonstrate that the developed heterogeneous implementation is efficient and that the DICE overhead is minimal. These results are promising in that it makes heterogeneous computing a viable way of reducing the rendering time needed to achieve a given result.
+Both workload distribution and heterogeneous efficiency results demonstrate that the developed heterogeneous implementation is efficient and that the DICE overhead is minimal. These results clearly show, for all algorithms, that the workload is distributed among all devices, with the fraction assigned to the \gls{cpu} increasing with the number of cores. This suggests that no devices starve for work, which is a good explanation of why performance scales so well for the number of tested devices. Since these algorithms and the used workload decomposition do not resort to global communications and also do not require work replication across different devices, the other overhead which could be responsible for non-scalable results would be a poor workload distribution; this is clearly not the case. These results are promising in that it makes heterogeneous computing a viable way of reducing the rendering time needed to achieve a given result.
 
-The image quality results show that each algorithm is best suited for specific situations. \gls{vcm} In the Sponza scene the best algorithm is Path Tracing ue to the outdoor scene configuration where many of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracing, not needing more complex solutions. In the Kitchen scene the best algorithm is the Bidirectional Path Tracing, while Path tracer and Bidirectional Photon Mapping fail to converge at all due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces. In the Living Room scene the Best algorithm is \gls{vcm} due to the presence of many specular-diffuse-specular paths (namely the reflected caustics in the mirror), which \gls{vcm} was specially designed to capture. Although not always the best algorithm, \gls{vcm} is able to converge in every scene, making it the more robust algorithm present among the studied techniques, as shown by previous research \citep{davidovivc2014progressive}.
+The image quality results show that each algorithm is best suited for specific situations. \gls{vcm} In the Sponza scene the best algorithm is Path Tracing due to the outdoor scene configuration where many of the light paths traced are lost and miss the scene, as well as the simple material lighting which is completely captured by Path Tracing, not needing more complex solutions. In the Kitchen scene the best algorithm is the Bidirectional Path Tracing, while Path tracer and Bidirectional Photon Mapping fail to converge at all due to the high variance of the lighting effects present, namely caustics incident on glossy surfaces. In the Living Room scene the Best algorithm is \gls{vcm} due to the presence of many specular-diffuse-specular paths (namely the reflected caustics in the mirror), which \gls{vcm} was specially designed to capture. Although not always the best algorithm, \gls{vcm} is able to converge in every scene, making it the more robust algorithm present among the studied techniques, as shown by previous research \citep{davidovivc2014progressive}.
 
 %As had been shown by all previous performance metrics these four figures clearly show that the algorithms are able to scale as the number of CPU cores increases, demonstrating that all devices are being used. 
 
