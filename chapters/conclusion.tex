@@ -1,6 +1,6 @@
-\chapter{Conclusions and Future Work}
+\chapter{Conclusions}
 
-%All algorithms suitable to heterogeneous systems containing CPUs and GPUs. BPM has worst efficiency.
+%All algorithms suitable to heterogeneous systems containing \gls{cpu}s and \gls{gpu}s. BPM has worst efficiency.
 
 %Bidirectional algorithms penalized in outdoor scenes.
 
@@ -12,12 +12,25 @@
 
 %Scheduler learing robust to handle workload distribution and maximizes efficiency.
 
-%Future work: try to adapt code to multi-GPU and develop for Xeon Phi.
+%Future work: try to adapt code to multi-\gls{gpu} and develop for Xeon Phi.
 
-From the observed results, it is possible to infer that all the studied algorithms are suited for heterogeneous systems containing both \gls{cpu} and \gls{gpu}, as all algorithms use the available resources efficiently.
+This work main goal was to evaluate the suitability of a set of state of the art light transport algorithms, based on path space integration, for execution on parallel heterogeneous systems using the DICE framework. Simultaneously, we were interested on identifying DICE's strong and weak points, regarding both performance and usability.
 
-From the studied algorithms, \gls{vcm} is the more robust, always converging to the solution expected, although with a slight overhead when not dealing with complex lighting.
+Four path space integration algorithms were selected (path tracing, bidirectional path tracing, bidirectional photon mapping and vertex connection and merge) based on their relevance and robustness for solving the light transport problem. Robust and efficient kernels were developed for each of these algorithms using specialized and highly optimized ray tracing libraries, namely Optix for the \gls{gpu} and Embree for the \gls{cpu}. DICE was then used to manage execution on a heterogeneous platform with 20 \gls{cpu} cores and a \gls{gpu}.
 
-DICE is a complete framework for programming heterogeneous systems, however during this work, only a small set of the available features were used. As specialized implementations for each device were used, and memory transfers were inexistent, only the DICE scheduler was used. The scheduler was efficient and distributed workload in a way that maximized performance and efficiency. From an usability point of view, DICE uses a simple C++ generic interface, making it and easy to program and interact with the existing rendering code, although there was the need to reconfigure some settings, namely the way DICE views the various available devices. Being able to consider the \gls{cpu} as a monolithic device or as a set of devices (\gls{cpu} cores) allows more sophisticated work decomposition schemes at the cost of developing simplicity. This configuration possibility was essential in photon mapping based algorithms as it allows a hybrid work decomposition, thus avoiding performance issues.
+Results demonstrated that all algorithms are able to efficiently exploit the available set of heterogeneous devices.  In fact, even when using all the devices, heterogeneous efficiency is well above 85\% for all algorithms. Execution times also show that the algorithms scale well within the evaluated heterogeneous system. No inflection point (i.e., a number of devices above which execution times starts to increase) is reached.
 
-As for future work, one of the main goals is to make the rendering code suitable for a multi-GPU environment, which due to limitations of the Optix framework is not trivial. Another interesting possibility is to adapt the developed code to the Intel \gls{mic} architecture using Embree as well. The study of other algorithms such as Metropolis Light Transport seems like an interesting possibility as well. Lastly, a comparative study between DICE and StarPU in terms of performance and usability seems important in order to determine which is the best heterogeneous system development framework.
+DICE is a complete framework for programming heterogeneous systems, however during this work, only a small set of the available features were used. As specialized implementations for each device were used, and memory transfers were inexistent, only the DICE scheduler was used. The scheduler was efficient and distributed workload in a way that maximized performance and efficiency. From an usability point of view, DICE uses a solid and simple C++ generic interface, making it and easy to program and interact with the existing rendering code, although there was the need to reconfigure some settings, namely the way DICE views the various available devices. Being able to consider the \gls{cpu} as a monolithic device or as a set of devices (\gls{cpu} cores) allows more sophisticated work decomposition schemes at the cost of developing simplicity. This configuration possibility was essential in photon mapping based algorithms as it allows a hybrid work decomposition, thus avoiding performance issues regarding communication.
+
+With respect to the light transport algorithms, image quality measurements show that different algorithms are more appropriate (i.e., converge faster) for different scene characteristics. \gls{vcm}, being the most complete algorithm, is the more robust, always converging to the expected solution; \gls{vcm} excels when specular-diffuse-specular paths are present, which have zero or very low probability of being sampled by the remaining algorithms.
+
+\section{Future Work}
+
+Current results do not exhaustively evaluate scalability on a heterogeneous system, because one single \gls{gpu} is used. Extending the code to a multi-\gls{gpu} environment is a priority, even though not trivial due to limitations of the Optix framework. Another interesting possibility is to adapt the developed code to the Intel \gls{mic} architecture using Embree as well.
+
+A very interesting line of research would be to understand and define metrics that characterize performance on an intuitive manner on heterogeneous systems. In fact, metrics such as speedup, efficiency, iso-efficiency, among others, are well understood for homogeneous systems, both for the fixed size and fixed time cases. There is clearly a need to define metrics for heterogeneous systems, which are well accepted and understood by the community. 
+
+Lastly, a comparative study between DICE and StarPU in terms of performance and usability seems important in order to determine which is the best heterogeneous system development framework.
+
+More sophisticated rendering algorithms, such as those based on Metropolis light transport combined with \gls{vcm}, have to be assessed with respect to both performance on heterogeneous systems and rate of convergence.
+

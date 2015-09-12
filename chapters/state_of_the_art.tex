@@ -1,4 +1,4 @@
-\chapter{Background on Computational Light Transport}
+\chapter{Background on Computational Light Transport and Heterogeneous Systems}
 
 Physically based rendering is the process of generating synthetic images indistinguishable from the perception of the real world. These images are generated according to a geometric model of the scene and models for every material and light source present. With this information is possible to simulate the light transport process from the light sources to the camera through the scene in order to synthesize an image. With this simulation, the radiance for each pixel of the image is determined, being radiance the radiant power incident on a given region per area and solid angle unit.
 
@@ -138,7 +138,7 @@ where $p_{VC}(x)$ is the probability of generating path $x$ through Bidirectiona
 \caption{\label{img:vcmdiag} Vertex Connection and Merging Algorithm}
 \end{figure}
 
-With a new path sampling technique, Vertex Merging, in conjunction with Bidirectional Path Tracing, or Vertex Connection, it is possible to combine these two techniques using \gls{mis} to achieve robustness. This new combined algorithm starts like Bidirectional Path Tracing by tracing a set of paths from the light sources, and stores the vertices in a range search acceleration structure. Then when the camera sub-paths are being traced, each vertex of the camera sub-path is connected to all the vertices of the respective light sub-path, and searches the acceleration structure for any vertices from any light sub-path viable for merging.
+With a new path sampling technique, Vertex Merging, in conjunction with Bidirectional Path Tracing, or Vertex Connection, it is possible to combine these two techniques using \gls{mis} to achieve robustness. This new combined algorithm starts like Bidirectional Path Tracing by tracing a set of paths from the light sources, and stores the vertices in a range search acceleration structure. Then when the camera sub-paths are being traced, each vertex of the camera sub-path is connected to all the vertices of the respective light sub-path, and searches the acceleration structure for any vertices from any light sub-path viable for merging. The search radius used in \gls{vcm} should be smaller than the radius used in other photon mapping based algorithms.
 
 This combined light transport algorithm maintains the high convergence rate of Bidirectional Path Tracing, while being able to handle caustics efficiently like Photon Mapping. The efficiency of this algorithm can still be improved by applying \gls{mcmc} techniques on top of it \citep{Georgiev}.
 
@@ -155,6 +155,8 @@ Beyond all the specific challenges of programming each device, there are even mo
 \subsection{Heterogeneous System Frameworks}
 
 There is a variety of frameworks that aim to solve the issues that arise when developing for heterogeneous systems, namely HMPP \citep{dolbeau2007hmpp}, Harmony \citep{diamos2008harmony}, Legion \citep{bauer2012legion}, StarPU \citep{augonnet2011starpu} and DICE \citep{Barbosa}. These frameworks aim to provide high level abstractions of an heterogeneous system, providing data management facilities and enhanced scheduling mechanisms. These frameworks also provide automatic work decomposition and transparent data transfers between devices.
+
+Although other frameworks like StarPU are more widely known used and by the scientific community, DICE offers an additional set of features, like the scheduler based on granularity refinement and the hybrid programming model, that differentiate it from the others, thus the choice of DICE for this work.
 
 \subsubsection{DICE}
 
